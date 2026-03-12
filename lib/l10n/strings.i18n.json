@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "Flutter Base"
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "submit": "Đăng nhập",
+    "hintUsername": "Nhập tên đăng nhập",
+    "hintPassword": "Nhập mật khẩu",
+    "errorLogin": "Đăng nhập thất bại"
+  },
+  "home": {
+    "title": "Trang chủ",
+    "welcome": "Chào mừng!"
+  }
+}

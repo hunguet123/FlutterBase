@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "Flutter Base"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Login",
+    "hintUsername": "Enter username",
+    "hintPassword": "Enter password",
+    "errorLogin": "Login failed"
+  },
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome!"
+  }
+}
