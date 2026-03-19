@@ -76,24 +76,11 @@ cp .env.prod.example .env.prod
 API_BASE_URL=https://api.development.com
 # API Key chung của ứng dụng (nếu cần)
 API_KEY=your_secret_api_key
-
-# Cấu hình Firebase chung
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_STORAGE_BUCKET=your-bucket.appspot.com
-FIREBASE_MESSAGING_SENDER_ID=1234567890
-
-# Cấu hình Firebase cho Android
-FIREBASE_ANDROID_API_KEY=AIzaSy...
-FIREBASE_ANDROID_APP_ID=1:1234567890:android:abcde
-
-# Cấu hình Firebase cho iOS
-FIREBASE_IOS_API_KEY=AIzaSy...
-FIREBASE_IOS_APP_ID=1:1234567890:ios:abcde
-FIREBASE_IOS_BUNDLE_ID=com.example.app.dev
 ```
 
 > **Giải thích cách dùng trong code:**
-> Hàm `main` (trong `main.dart`) sẽ tự động check `Flavor` đang chạy và nạp đúng file `.env.dev` hoặc `.env.prod` lên bộ nhớ.
+> Hàm `main` (trong `main.dart`) sẽ tự động check `Flavor` đang chạy và nạp đúng file `.env.dev` hoặc `.env.prod` lên bộ nhớ thông qua `flutter_dotenv`. 
+> Firebase sẽ tự động nhận diện cấu hình từ các tệp native (`google-services.json` / `GoogleService-Info.plist`) tương ứng với từng flavor.
 > Bất cứ lúc nào cần biến môi trường, bạn chỉ cần gọi `Env.apiBaseUrl` (thuộc `lib/core/config/env.dart`).
 > Không còn cần chạy lệnh `build_runner` khi bạn cập nhật file `.env` nữa, chỉ cần Hot Restart là xong!
 
@@ -129,7 +116,7 @@ Vui lòng copy tệp `.plist` vào thư mục `ios/Runner/` với đúng tên fi
 *(Lưu ý: Dự án đã được thiết lập sẵn **Build Phase Script** để tự động hoán đổi tệp cấu hình iOS dựa trên môi trường).*
 
 #### 🎯 Dart
-Đảm bảo thông số Firebase trong file `.env.dev` và `.env.prod` được điền đầy đủ và khớp với các tệp native trên.
+Dự án sẽ tự động khởi tạo Firebase bằng lệnh `await Firebase.initializeApp();` trong `main.dart`. Flutter sẽ tự động tìm nạp cấu hình từ các tệp native đã thiết lập ở trên dựa theo flavor đang chạy. Không cần cấu hình thêm thông số Firebase trong file `.env`.
 
 ---
 
