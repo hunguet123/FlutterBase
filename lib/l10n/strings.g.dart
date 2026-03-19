@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 10
+/// Strings: 11
 ///
-/// Built on 2026-03-12 at 04:42 UTC
+/// Built on 2026-03-19 at 07:10 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -187,6 +187,7 @@ class _StringsHomeVi {
 	// Translations
 	String get title => 'Trang chủ';
 	String get welcome => 'Chào mừng!';
+	String get logout => 'Đăng xuất';
 }
 
 /// Flat map(s) containing all translations.
@@ -205,6 +206,7 @@ extension on Translations {
 			case 'login.errorLogin': return 'Đăng nhập thất bại';
 			case 'home.title': return 'Trang chủ';
 			case 'home.welcome': return 'Chào mừng!';
+			case 'home.logout': return 'Đăng xuất';
 			default: return null;
 		}
 	}

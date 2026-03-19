@@ -13,6 +13,7 @@
   },
   "home": {
     "title": "Trang chủ",
-    "welcome": "Chào mừng!"
+    "welcome": "Chào mừng!",
+    "logout": "Đăng xuất"
   }
 }

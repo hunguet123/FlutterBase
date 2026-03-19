@@ -39,16 +39,16 @@ class PreferencesStorageImpl implements PreferencesStorage {
       _prefs.setStringList(key, value);
 
   @override
-  String? getString(String key) => _prefs.getString(key);
+  Future<String?> getString(String key) async => _prefs.getString(key);
 
   @override
-  int? getInt(String key) => _prefs.getInt(key);
+  Future<int?> getInt(String key) async => _prefs.getInt(key);
 
   @override
-  bool? getBool(String key) => _prefs.getBool(key);
+  Future<bool?> getBool(String key) async => _prefs.getBool(key);
 
   @override
-  List<String>? getStringList(String key) => _prefs.getStringList(key);
+  Future<List<String>?> getStringList(String key) async => _prefs.getStringList(key);
 
   @override
   Future<void> remove(String key) => _prefs.remove(key);

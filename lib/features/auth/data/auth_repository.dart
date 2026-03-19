@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'auth_session_store.dart';
+import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 
 /// Repository for authentication. Calls API for login, manages tokens.
 abstract interface class AuthRepository {
@@ -18,20 +18,40 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> login(String username, String password) async {
-    final response = await _dio.post<Map<String, dynamic>>(
+    final response = await _dio.post(
       _loginPath,
       data: {'username': username, 'password': password},
     );
 
     if (response.statusCode == 200 && response.data != null) {
-      final data = response.data!;
+      if (response.data is! Map<String, dynamic>) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Login failed: Expected JSON object but got ${response.data.runtimeType}',
+        );
+      }
+      
+      final data = response.data as Map<String, dynamic>;
       final accessToken =
           data['access_token'] as String? ?? data['token'] as String?;
       final refreshToken = data['refresh_token'] as String?;
 
       if (accessToken != null && accessToken.isNotEmpty) {
         await AuthSessionStore.instance.setTokens(accessToken, refreshToken);
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: 'Login failed: access_token missing in response',
+        );
       }
+    } else {
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        message: 'Login failed: Invalid status code or empty data',
+      );
     }
   }
 

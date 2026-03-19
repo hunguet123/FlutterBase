@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../core/storage/secure_storage.dart';
+import 'package:flutter_base/core/storage/secure_storage.dart';
 
 const _accessTokenKey = 'access_token';
 const _refreshTokenKey = 'refresh_token';

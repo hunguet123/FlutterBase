@@ -9,7 +9,7 @@ Template Flutter với kiến trúc sẵn: Auth API, Riverpod, GoRouter, Firebas
 - **State management**: Riverpod
 - **Định tuyến**: Go Router
 - **Mạng**: Dio
-- **Biến môi trường**: Envied (type-safe)
+- **Biến môi trường**: flutter_dotenv (runtime loaded)
 - **Đa ngôn ngữ**: Slang (i18n)
 - **Firebase**: Analytics, Crashlytics, Messaging, Remote Config
 - **Lưu trữ local**:
@@ -32,76 +32,97 @@ Template Flutter với kiến trúc sẵn: Auth API, Riverpod, GoRouter, Firebas
 flutter pub get
 # hoặc
 fvm flutter pub get
+
+# Đối với iOS, cần thêm:
+cd ios && pod install
 ```
 
 ---
 
 ## Cấu hình
 
-### 1. Biến môi trường
+### 1. Biến môi trường (Environment Variables)
 
-Dự án dùng **2 flavor**: `development` và `production`. Mỗi flavor dùng file env riêng:
+Dự án dùng `flutter_dotenv` để quản lý biến môi trường nạp lúc runtime. Dự án được chia làm **2 flavor**: `development` và `production`. Mỗi flavor dùng một file env riêng biệt.
 
-| Flavor      | File env   |
-|------------|------------|
-| development | `.env.dev` |
-| production | `.env.prod` |
+| Flavor      | Nơi định nghĩa class      | File chứa biến thực tế |
+|-------------|---------------------------|------------------------|
+| development | `lib/core/config/env.dart`| `.env.dev`             |
+| production  | `lib/core/config/env.dart`| `.env.prod`            |
 
-**Bước 1**: Copy file mẫu và điền giá trị thực:
+**Quy trình cấu hình:**
+
+**Bước 1**: Copy file mẫu (nếu có) hoặc tạo file mới và điền giá trị thực tế của bạn. Lưu ý KHÔNG commit các file này lên Git (chúng đã được thêm vào `.gitignore`).
 
 ```bash
-# Tạo .env.dev (hoặc copy từ .env.example nếu có)
-cp .env.dev .env.dev.local
+# Tạo file env cho development
+cp .env.dev.example .env.dev 
 
-# Tạo .env.prod
-cp .env.prod .env.prod.local
+# Tạo file env cho production
+cp .env.prod.example .env.prod
 ```
 
-**Bước 2**: Các biến cần thiết trong `.env.dev` / `.env.prod`:
+**Bước 2**: Điền các giá trị cần thiết vào bên trong file `.env.dev` và `.env.prod`. Đây là cấu trúc cơ bản bạn cần có:
 
-- `API_BASE_URL` – Base URL API
-- `API_KEY` – API key (nếu dùng)
-- `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`
-- Android: `FIREBASE_ANDROID_API_KEY`, `FIREBASE_ANDROID_APP_ID`
-- iOS: `FIREBASE_IOS_API_KEY`, `FIREBASE_IOS_APP_ID`, `FIREBASE_IOS_BUNDLE_ID`
+```env
+# URL của API server
+API_BASE_URL=https://api.development.com
+# API Key chung của ứng dụng (nếu cần)
+API_KEY=your_secret_api_key
 
-**Lưu ý**: Nếu dùng `.env.dev` / `.env.prod` thay vì `.env.dev.local`, hãy thêm chúng vào `.gitignore` nếu chứa thông tin nhạy cảm.
+# Cấu hình Firebase chung
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_STORAGE_BUCKET=your-bucket.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=1234567890
+
+# Cấu hình Firebase cho Android
+FIREBASE_ANDROID_API_KEY=AIzaSy...
+FIREBASE_ANDROID_APP_ID=1:1234567890:android:abcde
+
+# Cấu hình Firebase cho iOS
+FIREBASE_IOS_API_KEY=AIzaSy...
+FIREBASE_IOS_APP_ID=1:1234567890:ios:abcde
+FIREBASE_IOS_BUNDLE_ID=com.example.app.dev
+```
+
+> **Giải thích cách dùng trong code:**
+> Hàm `main` (trong `main.dart`) sẽ tự động check `Flavor` đang chạy và nạp đúng file `.env.dev` hoặc `.env.prod` lên bộ nhớ.
+> Bất cứ lúc nào cần biến môi trường, bạn chỉ cần gọi `Env.apiBaseUrl` (thuộc `lib/core/config/env.dart`).
+> Không còn cần chạy lệnh `build_runner` khi bạn cập nhật file `.env` nữa, chỉ cần Hot Restart là xong!
 
 ### 2. Code generation
 
-Chạy build_runner để sinh code cho Envied và Riverpod:
+Khi cập nhật file i18n (`lib/l10n/*.i18n.json`), hoặc thêm Provider mới của Riverpod (`@riverpod`), bạn cần chạy lệnh:
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
-```
-
-Sinh i18n từ Slang:
-
-```bash
+# Sinh code cho i18n (Slang)
 dart run slang
+
+# Sinh code cho Riverpod
+dart run build_runner build --delete-conflicting-outputs
+
+# Tự động sinh code khi file thay đổi
+dart run build_runner watch --delete-conflicting-outputs
 ```
 
-### 3. Firebase
+### 3. Firebase Configuration
 
-**Tạo file cấu hình cho từng flavor:**
+Để các Native SDK (FCM, Crashlytics...) hoạt động, bạn cần tải các tệp cấu hình từ Firebase Console và đặt vào đúng các thư mục sau cho từng Flavor:
 
-Dự án dùng **2 Firebase project** (dev và prod). Chạy lệnh riêng cho từng flavor:
+#### 🤖 Android
+Vui lòng copy tệp `google-services.json` vào:
+- **Development**: `android/app/src/development/google-services.json`
+- **Production**: `android/app/src/production/google-services.json`
 
-```bash
-# Development (chọn Firebase project dev khi được hỏi)
-flutterfire configure \
-  --android-out=android/app/src/development/google-services.json \
-  --ios-out=ios/Runner/GoogleService-Info-Development.plist
+#### 🍎 iOS
+Vui lòng copy tệp `.plist` vào thư mục `ios/Runner/` với đúng tên file:
+- **Development**: `ios/Runner/GoogleService-Info-Development.plist`
+- **Production**: `ios/Runner/GoogleService-Info-Production.plist`
 
-# Production (chọn Firebase project prod khi được hỏi)
-flutterfire configure \
-  --android-out=android/app/src/production/google-services.json \
-  --ios-out=ios/Runner/GoogleService-Info-Production.plist
-```
+*(Lưu ý: Dự án đã được thiết lập sẵn **Build Phase Script** để tự động hoán đổi tệp cấu hình iOS dựa trên môi trường).*
 
-**Lưu ý:** Dự án dùng `FirebaseOptionsProvider` (từ `.env`) cho Dart, không dùng `firebase_options.dart`. Các file `google-services.json` và `GoogleService-Info.plist` vẫn cần cho native Firebase SDK.
-
-**Thay thế nếu flutterfire lỗi:** Tải file từ [Firebase Console](https://console.firebase.google.com/) → Project Settings → Your apps → Download config, rồi copy thủ công vào đúng đường dẫn trên.
+#### 🎯 Dart
+Đảm bảo thông số Firebase trong file `.env.dev` và `.env.prod` được điền đầy đủ và khớp với các tệp native trên.
 
 ---
 
@@ -142,38 +163,46 @@ flutter build apk --flavor production
 flutter build ios --flavor production
 ```
 
-**Credentials mẫu cho login**: `username: Hunghq`, `password: 123456` (cần mock API trả 200 + token).
+**Credentials mẫu cho login**: `username: hunghq`, `password: 12345` (cần mock API trả 200 + token).
 
 ---
 
 ## Cách test
 
-### Unit & Widget tests
+Dự án hiện tại đang tập trung toàn bộ vào **E2E Tests (Integration Tests với Patrol)** để đảm bảo ứng dụng thực tế hoạt động trơn tru trên thiết bị/máy ảo thay vì test Unit/Widget nhỏ lẻ.
 
+### E2E Tests (Integration Tests với Patrol)
+
+Dự án sử dụng Patrol để chạy End-to-End test. Patrol sẽ build app, mở máy ảo lên và tự động thao tác trên giao diện giống hệt người dùng thật.
+
+**1. Cài đặt Patrol CLI (chỉ cần làm 1 lần):**
 ```bash
-flutter test
-# hoặc
-fvm flutter test
+dart pub global activate patrol_cli
+export PATH="$PATH:$HOME/.pub-cache/bin"   # thêm vào ~/.bashrc hoặc ~/.zshrc
 ```
 
-Các nhóm test:
-
-- `test/features/auth/auth_repository_test.dart` – AuthRepository (login, logout, hasSession)
-- `test/features/auth/auth_notifier_test.dart` – AuthNotifier (login, logout, restore session)
-- `test/widget_test.dart` – LoginScreen (form, submit)
-
-### E2E với Patrol
+**2. Chạy E2E Tests:**
+Bật máy ảo (Emulator/Simulator) hoặc cắm thiết bị thật vào trước khi chạy.
 
 ```bash
-# Cài (1 lần)
-fvm flutter pub global activate patrol_cli
-export PATH="$PATH:$HOME/.pub-cache/bin"   # thêm vào ~/.zshrc nếu cần
+# Chạy toàn bộ các test trong thư mục patrol_test
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test
 
-# Chạy (mở Android emulator trước)
-patrol test --flavor development --flutter-command "fvm flutter" --device android
+# Chạy cụ thể 1 luồng test (ví dụ: luồng đăng nhập)
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --target patrol_test/features/auth/login_flow_test.dart
+
+# Chạy test (Mặc định dùng user 'hunghq' / pass '12345' ghi cứng trong code)
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --target patrol_test/features/auth/login_flow_test.dart
 ```
 
-**Lưu ý iOS:** Cần thêm target `RunnerUITests` theo [Patrol iOS setup](https://patrol.leancode.co/documentation). Trước khi setup xong, dùng Android emulator.
+**3. Chế độ Develop (Hot Restart cho Test):**
+Giúp viết test nhanh hơn. Patrol sẽ không build lại app từ đầu mà chỉ hot restart ứng dụng mỗi khi bạn lưu file test:
+
+```bash
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol develop --target patrol_test/features/auth/login_flow_test.dart
+```
+
+**Lưu ý iOS:** Cần setup thêm target `RunnerUITests` theo [Patrol iOS setup](https://patrol.leancode.co/documentation). Khuyên dùng Android Emulator trong quá trình phát triển để test nhanh gọn hơn.
 
 ---
 
@@ -202,7 +231,8 @@ lib/
 │   ├── auth/                # Login, AuthRepository, AuthSessionStore
 │   └── home/                # HomeScreen
 ├── l10n/                    # i18n (Slang)
-└── routing/                 # GoRouter
+├── routing/                 # GoRouter
+└── shared/                  # Common widgets, models, providers (cấu trúc sẵn)
 ```
 
 ---

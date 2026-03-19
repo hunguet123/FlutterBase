@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../l10n/strings.g.dart';
-import '../../../../routing/app_routes.dart';
-import '../../providers/auth_provider.dart';
+import 'package:flutter_base/l10n/strings.g.dart';
+import 'package:flutter_base/routing/app_routes.dart';
+import 'package:flutter_base/shared/widgets/app_button.dart';
+import 'package:flutter_base/shared/widgets/app_text_field.dart';
+import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 
 /// Login screen. On successful API login navigates to Home.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -66,24 +68,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
+                AppTextField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: t.login.username,
-                    hintText: t.login.hintUsername,
-                  ),
+                  labelText: t.login.username,
+                  hintText: t.login.hintUsername,
                   textInputAction: TextInputAction.next,
                   enabled: !_isLoading,
                   validator: (v) =>
                       (v == null || v.isEmpty) ? t.login.hintUsername : null,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                AppTextField(
                   controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: t.login.password,
-                    hintText: t.login.hintPassword,
-                  ),
+                  labelText: t.login.password,
+                  hintText: t.login.hintPassword,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                   enabled: !_isLoading,
@@ -92,15 +90,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       (v == null || v.isEmpty) ? t.login.hintPassword : null,
                 ),
                 const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _isLoading ? null : _onSubmit,
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(t.login.submit),
+                AppButton(
+                  onPressed: _onSubmit,
+                  text: t.login.submit,
+                  isLoading: _isLoading,
                 ),
               ],
             ),

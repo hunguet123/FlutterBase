@@ -3,10 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/analytics/analytics_events.dart';
-import '../features/auth/presentation/screens/login_screen.dart';
-import '../features/home/presentation/screens/home_screen.dart';
-import 'app_routes.dart';
+import 'package:flutter_base/core/analytics/analytics_events.dart';
+import 'package:flutter_base/features/auth/presentation/screens/login_screen.dart';
+import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
+import 'package:flutter_base/routing/app_routes.dart';
 
 /// NavigatorObserver that logs screen views to Firebase Analytics.
 class _AnalyticsRouteObserver extends NavigatorObserver {

@@ -2,9 +2,9 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/analytics/analytics_events.dart';
-import '../data/auth_repository.dart';
-import '../data/auth_repository_provider.dart';
+import 'package:flutter_base/core/analytics/analytics_events.dart';
+import 'package:flutter_base/features/auth/data/auth_repository.dart';
+import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
 
 final authNotifierProvider =
     AsyncNotifierProvider<AuthNotifier, bool>(AuthNotifier.new);

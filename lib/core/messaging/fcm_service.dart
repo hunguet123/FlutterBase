@@ -37,7 +37,36 @@ class FcmService {
 
   /// Stream of token refresh.
   Stream<String> get onTokenRefresh => _messaging.onTokenRefresh;
+
+  /// Setup all listeners and request permissions.
+  Future<void> init() async {
+    await requestPermission();
+
+    // Log token
+    final token = await getToken();
+    // ignore: avoid_print
+    print('FCM Token: $token');
+
+    onTokenRefresh.listen((token) {
+      // ignore: avoid_print
+      print('FCM Token Refreshed: $token');
+      // TODO: Send new token to backend session
+    });
+
+    onMessage.listen((msg) {
+      // Foreground message – log or show in-app notification
+      // ignore: avoid_print
+      print('FCM foreground: ${msg.notification?.title}');
+    });
+
+    onMessageOpenedApp.listen((msg) {
+      // User tapped notification – handle deep link / navigate
+      // ignore: avoid_print
+      print('FCM opened: ${msg.data}');
+    });
+  }
 }
+
 
 final fcmServiceProvider = Provider<FcmService>((ref) {
   final messaging = ref.watch(firebaseMessagingProvider);

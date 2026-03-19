@@ -4,10 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/messaging/fcm_service.dart';
-import 'features/auth/providers/auth_provider.dart';
-import 'l10n/strings.g.dart';
-import 'routing/app_router.dart';
+import 'package:flutter_base/core/config/app_theme.dart';
+import 'package:flutter_base/core/messaging/fcm_service.dart';
+import 'package:flutter_base/features/auth/providers/auth_provider.dart';
+import 'package:flutter_base/l10n/strings.g.dart';
+import 'package:flutter_base/routing/app_router.dart';
 
 /// Root app widget. Wraps MaterialApp with router, localization, theme.
 class App extends ConsumerStatefulWidget {
@@ -26,23 +27,11 @@ class _AppState extends ConsumerState<App> {
     super.initState();
     _refreshNotifier = GoRouterRefreshNotifier(false);
     _router = createAppRouter(_refreshNotifier);
-    _initFcm();
-  }
-
-  void _initFcm() {
-    if (Firebase.apps.isEmpty) return; // Skip in tests when Firebase not initialized
-    final fcm = ref.read(fcmServiceProvider);
-    fcm.requestPermission();
-    fcm.onMessage.listen((msg) {
-      // Foreground message – log or show in-app notification
-      // ignore: avoid_print
-      print('FCM foreground: ${msg.notification?.title}');
-    });
-    fcm.onMessageOpenedApp.listen((msg) {
-      // User tapped notification – handle deep link / navigate
-      // ignore: avoid_print
-      print('FCM opened: ${msg.data}');
-    });
+    
+    // Lazy init FCM service
+    if (Firebase.apps.isNotEmpty) {
+      ref.read(fcmServiceProvider).init();
+    }
   }
 
   @override
@@ -56,49 +45,45 @@ class _AppState extends ConsumerState<App> {
     final authAsync = ref.watch(authNotifierProvider);
 
     return authAsync.when(
-      loading: () => TranslationProvider(
-        child: MaterialApp(
-          title: t.app.title,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          home: const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
-          locale: LocaleSettings.currentLocale.flutterLocale,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          localizationsDelegates: [
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
+      loading: () => _buildApp(
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (_, __) => _buildAppWithRouter(false),
-      data: (isLoggedIn) => _buildAppWithRouter(isLoggedIn),
+      error: (_, __) => _buildApp(isLoggedIn: false),
+      data: (isLoggedIn) => _buildApp(isLoggedIn: isLoggedIn),
     );
   }
 
-  Widget _buildAppWithRouter(bool isLoggedIn) {
-    _refreshNotifier.update(isLoggedIn);
+  Widget _buildApp({bool? isLoggedIn, Widget? home}) {
+    if (isLoggedIn != null) {
+      _refreshNotifier.update(isLoggedIn);
+    }
 
-    return TranslationProvider(
-      child: MaterialApp.router(
-        title: t.app.title,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        routerConfig: _router,
-        locale: LocaleSettings.currentLocale.flutterLocale,
-        supportedLocales: AppLocaleUtils.supportedLocales,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-      ),
-    );
+    final child = home != null
+        ? MaterialApp(
+            title: t.app.title,
+            theme: AppTheme.lightTheme,
+            home: home,
+            locale: LocaleSettings.currentLocale.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: _localizationsDelegates,
+          )
+        : MaterialApp.router(
+            title: t.app.title,
+            theme: AppTheme.lightTheme,
+            routerConfig: _router,
+            locale: LocaleSettings.currentLocale.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: _localizationsDelegates,
+          );
+
+    return TranslationProvider(child: child);
   }
+
+  static const _localizationsDelegates = [
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 }

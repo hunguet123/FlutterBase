@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
-import '../../features/auth/data/auth_session_store.dart';
+import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 
 /// Logging interceptor for debug.
 class ApiLogInterceptor extends Interceptor {
@@ -13,7 +13,17 @@ class ApiLogInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) {
     // ignore: avoid_print
-    print('${options.method} ${options.uri}');
+    print('┌------------------------------------------------------------------------------');
+    // ignore: avoid_print
+    print('| REQUEST 🌐 ${options.method} ${options.uri}');
+    // ignore: avoid_print
+    print('| Headers: ${options.headers}');
+    if (options.data != null) {
+      // ignore: avoid_print
+      print('| Body: ${options.data}');
+    }
+    // ignore: avoid_print
+    print('└------------------------------------------------------------------------------');
     handler.next(options);
   }
 
@@ -23,7 +33,15 @@ class ApiLogInterceptor extends Interceptor {
     ResponseInterceptorHandler handler,
   ) {
     // ignore: avoid_print
-    print('${response.statusCode} ${response.requestOptions.uri}');
+    print('┌------------------------------------------------------------------------------');
+    // ignore: avoid_print
+    print('| RESPONSE ✅ ${response.statusCode} ${response.requestOptions.uri}');
+    if (response.data != null) {
+      // ignore: avoid_print
+      print('| Payload: ${response.data}');
+    }
+    // ignore: avoid_print
+    print('└------------------------------------------------------------------------------');
     handler.next(response);
   }
 
@@ -33,7 +51,17 @@ class ApiLogInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) {
     // ignore: avoid_print
-    print('Error: ${err.message}');
+    print('┌------------------------------------------------------------------------------');
+    // ignore: avoid_print
+    print('| ERROR ❌ ${err.response?.statusCode} ${err.requestOptions.uri}');
+    // ignore: avoid_print
+    print('| Message: ${err.message}');
+    if (err.response?.data != null) {
+      // ignore: avoid_print
+      print('| Response Data: ${err.response?.data}');
+    }
+    // ignore: avoid_print
+    print('└------------------------------------------------------------------------------');
     handler.next(err);
   }
 }
