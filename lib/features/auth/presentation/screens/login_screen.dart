@@ -7,6 +7,7 @@ import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
+import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 
 /// Login screen. On successful API login navigates to Home.
@@ -45,7 +46,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on DioException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${context.t.login.errorLogin}: ${e.message}')),
+        SnackBar(content: Text('${Translations.of(context).login.errorLogin}: ${e.message}')),
       );
     } finally {
       if (mounted) {
@@ -56,10 +57,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
+    final translations = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.login.title)),
+      appBar: AppAppBar(title: translations.login.title),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -70,29 +71,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 AppTextField(
                   controller: _usernameController,
-                  labelText: t.login.username,
-                  hintText: t.login.hintUsername,
+                  labelText: translations.login.username,
+                  hintText: translations.login.hintUsername,
                   textInputAction: TextInputAction.next,
                   enabled: !_isLoading,
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? t.login.hintUsername : null,
+                      (v == null || v.isEmpty) ? translations.login.hintUsername : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
                   controller: _passwordController,
-                  labelText: t.login.password,
-                  hintText: t.login.hintPassword,
+                  labelText: translations.login.password,
+                  hintText: translations.login.hintPassword,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                   enabled: !_isLoading,
                   onFieldSubmitted: (_) => _onSubmit(),
                   validator: (v) =>
-                      (v == null || v.isEmpty) ? t.login.hintPassword : null,
+                      (v == null || v.isEmpty) ? translations.login.hintPassword : null,
                 ),
                 const SizedBox(height: 24),
                 AppButton(
                   onPressed: _onSubmit,
-                  text: t.login.submit,
+                  text: translations.login.submit,
                   isLoading: _isLoading,
                 ),
               ],

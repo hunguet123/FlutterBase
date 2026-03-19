@@ -60,23 +60,29 @@ class _AppState extends ConsumerState<App> {
       _refreshNotifier.update(isLoggedIn);
     }
 
+    final translations = t;
+
     final child = home != null
         ? MaterialApp(
-            title: t.app.title,
+            title: translations.app.title,
             theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             home: home,
             locale: LocaleSettings.currentLocale.flutterLocale,
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: _localizationsDelegates,
           )
         : MaterialApp.router(
-            title: t.app.title,
+            title: translations.app.title,
             theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             routerConfig: _router,
             locale: LocaleSettings.currentLocale.flutterLocale,
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: _localizationsDelegates,
           );
+
+
 
     return TranslationProvider(child: child);
   }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
+import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 
 /// Home screen shown after successful login.
@@ -13,11 +14,11 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = context.t;
+    final translations = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(t.home.title),
+      appBar: AppAppBar(
+        title: translations.home.title,
         actions: [
           IconButton(
             key: const Key('logoutIcon'),
@@ -38,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                t.home.welcome,
+                translations.home.welcome,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 32),
@@ -48,7 +49,7 @@ class HomeScreen extends ConsumerWidget {
                   if (!context.mounted) return;
                   context.go(AppRoutes.login);
                 },
-                text: t.home.logout,
+                text: translations.home.logout,
               ),
             ],
           ),
