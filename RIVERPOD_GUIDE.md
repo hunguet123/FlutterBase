@@ -14,26 +14,48 @@ final apiClientProvider = Provider<Dio>((ref) {
 ```
 - **Cách dùng:** `ref.read(apiClientProvider)` để lấy instance của Dio.
 
-### 🔹 AsyncNotifierProvider (Quản lý trạng thái phức tạp + Bất đồng bộ)
-Dùng cho các logic nghiệp vụ có trạng thái (ví dụ: Auth, List dữ liệu). Đây là loại provider mạnh mẽ nhất.
-- **Ví dụ:** `authNotifierProvider`.
-```dart
-final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, bool>(AuthNotifier.new);
+### 🔹 AsyncNotifierProvider (Quản lý trạng thái thông minh)
+Đây là loại Provider "vạn năng" nhất để xử lý logic có trạng thái và gọi API. 
 
-class AuthNotifier extends AsyncNotifier<bool> {
+Với cách dùng `@riverpod` (Code generation), bạn không cần khai báo kiểu dữ liệu phức tạp. Hãy xem ví dụ luồng Đăng nhập (Auth):
+
+```dart
+@riverpod
+class AuthNotifier extends _$AuthNotifier {
   @override
-  Future<bool> build() async => ...; // Khởi tạo dữ liệu ban đầu
-  
-  Future<void> login(...) async {
+  Future<bool> build() async {
+    // 1. Khởi tạo: Check xem user đã đăng nhập chưa từ bộ nhớ local
+    return ref.read(authRepositoryProvider).hasSession();
+  }
+
+  Future<void> login(String user, String pass) async {
+    // 2. Chuyển state sang Loading (UI sẽ tự động quay tròn)
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ...);
+
+    // 3. Thực thi an toàn với .guard()
+    state = await AsyncValue.guard(() async {
+      await ref.read(authRepositoryProvider).login(user, pass);
+      return true; // Thành công -> State sẽ là AsyncData(true)
+    });
+
+    // Nếu có lỗi, .guard() tự bắt và chuyển state sang AsyncError(loi)
   }
 }
 ```
 
+**Tại sao nó mạnh mẽ?**
+-   **Tự động dọn dẹp:** Nó là `autoDispose` mặc định (tự reset state khi thoát màn hình).
+-   **Quản lý 3 trạng thái:** Bạn không cần tạo thêm các biến `bool isLoading` hay `String? errorMessage`. Bản thân `state` đã chứa đủ: `.isLoading`, `.hasError`, `.value`.
+
 ### 🔹 FutureProvider
-Dùng để lấy dữ liệu từ một tác vụ bất đồng bộ duy nhất (ví dụ: đọc từ local storage lần đầu).
-- **Ví dụ:** `preferencesStorageProvider`.
+Thực chất `FutureProvider` là một dạng đơn giản của `AsyncNotifierProvider` (chỉ có `build` mà không có các hàm xử lý sự kiện như `login`, `logout`).
+
+```dart
+@riverpod
+Future<String> fetchUserConfig(FetchUserConfigRef ref) async {
+  return "Dữ liệu được lấy từ server";
+}
+```
 
 ---
 
