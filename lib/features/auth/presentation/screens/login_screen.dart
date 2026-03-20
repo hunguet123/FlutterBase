@@ -39,6 +39,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       await ref.read(loginNotifierProvider.notifier).login(username, password);
+    } on ValidationException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
     } on MaintenanceException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

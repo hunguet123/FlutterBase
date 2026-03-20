@@ -9,7 +9,7 @@ import 'package:flutter_base/core/config/domain/models/app_config.dart';
 part 'app_config_provider.g.dart';
 
 /// Provides app-wide Remote Config values as a domain-friendly model.
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [remoteConfig])
 AppConfig appConfig(Ref ref) {
   final remoteConfig = ref.watch(remoteConfigProvider);
   return _appConfigFromRemoteConfig(remoteConfig);

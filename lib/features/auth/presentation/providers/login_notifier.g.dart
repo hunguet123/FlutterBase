@@ -6,7 +6,7 @@ part of 'login_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loginNotifierHash() => r'd3231d92c7c8ffb62885eae02cbaa03bc4830ee1';
+String _$loginNotifierHash() => r'd447ca16f1f7f8b6b8c86cef53d6b8d542c15a0f';
 
 /// See also [LoginNotifier].
 @ProviderFor(LoginNotifier)
@@ -18,16 +18,10 @@ final loginNotifierProvider =
           const bool.fromEnvironment('dart.vm.product')
               ? null
               : _$loginNotifierHash,
-      dependencies: <ProviderOrFamily>[
-        authRepositoryProvider,
-        appConfigProvider,
-        analyticsProvider,
-      ],
+      dependencies: <ProviderOrFamily>[loginUseCaseProvider, analyticsProvider],
       allTransitiveDependencies: <ProviderOrFamily>{
-        authRepositoryProvider,
-        ...?authRepositoryProvider.allTransitiveDependencies,
-        appConfigProvider,
-        ...?appConfigProvider.allTransitiveDependencies,
+        loginUseCaseProvider,
+        ...?loginUseCaseProvider.allTransitiveDependencies,
         analyticsProvider,
         ...?analyticsProvider.allTransitiveDependencies,
       },

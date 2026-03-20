@@ -6,7 +6,7 @@ part of 'app_config_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appConfigHash() => r'e81422ebf06e1a1a2c530f39578738c42f1513fb';
+String _$appConfigHash() => r'4e468b75c1ddf3eb447e0135add685e3d508a2be';
 
 /// Provides app-wide Remote Config values as a domain-friendly model.
 ///
@@ -17,8 +17,11 @@ final appConfigProvider = Provider<AppConfig>.internal(
   name: r'appConfigProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$appConfigHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
+  dependencies: <ProviderOrFamily>[remoteConfigProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    remoteConfigProvider,
+    ...?remoteConfigProvider.allTransitiveDependencies,
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
