@@ -51,11 +51,27 @@ Vui lòng đặt các file `google-services.json` và `GoogleService-Info.plist`
 
 ## 🧪 Kiểm thử (Testing)
 
-Dự án sử dụng **Patrol** để chạy E2E Integration Tests trên thiết bị thật/giả lập:
+Dự án sử dụng **Patrol** để chạy E2E Integration Tests trên thiết bị thật/giả lập.
+
+### 1. Cài đặt Patrol CLI (Chỉ cần làm 1 lần)
+```bash
+# Sử dụng Dart để cài đặt toàn cục
+dart pub global activate patrol_cli
+```
+*Lưu ý: Đảm bảo bạn đã thêm biến môi trường cho thư mục `.pub-cache/bin` vào hệ thống.*
+
+### 2. Chạy Test (Hỗ trợ Flavors)
+Mặc định dự án dùng flavor để phân tách môi trường, vì vậy khi chạy test hãy chỉ định môi trường tương ứng:
 
 ```bash
-# Chạy toàn bộ test suite
-PATROL_FLUTTER_COMMAND="fvm flutter" patrol test
+# Chạy test trên môi trường Development (Mặc định thường dùng khi dev)
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --flavor development
+
+# Chạy test trên môi trường Production
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --flavor production
+
+# Chạy cho một kịch bản cụ thể trên môi trường Dev
+PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --target patrol_test/features/auth/login_flow_test.dart --flavor development
 ```
 
 ---

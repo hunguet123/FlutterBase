@@ -9,6 +9,7 @@ import 'package:patrol/src/platform/contracts/contracts.dart';
 import 'package:test_api/src/backend/invoker.dart';
 
 // START: GENERATED TEST IMPORTS
+import 'core/smoke_test.dart' as core__smoke_test;
 import 'features/auth/login_flow_test.dart' as features__auth__login_flow_test;
 // END: GENERATED TEST IMPORTS
 
@@ -72,6 +73,7 @@ Future<void> main() async {
   });
 
 // START: GENERATED TEST GROUPS
+  group('core.smoke_test', core__smoke_test.main);
   group('features.auth.login_flow_test', features__auth__login_flow_test.main);
 // END: GENERATED TEST GROUPS
 
