@@ -86,4 +86,13 @@ PATROL_FLUTTER_COMMAND="fvm flutter" patrol test --target patrol_test/features/a
 - `lib/shared/`: Widget và Model dùng chung toàn App.
 
 ---
+
+## 🔑 Thông tin đăng nhập (Test Credentials)
+Để chạy thử ứng dụng (mock API), bạn có thể sử dụng tài khoản sau:
+- **Username**: `hunghq`
+- **Password**: `12345`
+*(Lưu ý: Tài khoản này được sử dụng trong các kịch bản Patrol test tại `patrol_test/`)*
+
+---
+
 *Ghi chú: Luôn ưu tiên tái sử dụng widget tại `lib/shared/widgets/` trước khi tạo mới.*

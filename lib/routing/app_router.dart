@@ -111,6 +111,7 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
 
 /// Provider for GoRouterRefreshNotifier.
 @Riverpod(
+  keepAlive: true,
   dependencies: [
     AuthNotifier,
     authRepository,
@@ -138,6 +139,7 @@ Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
 
 /// Provider for application router.
 @Riverpod(
+  keepAlive: true,
   dependencies: [
     authRefreshNotifier,
     AuthNotifier,

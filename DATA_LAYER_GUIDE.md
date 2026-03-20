@@ -9,8 +9,9 @@ Mỗi tính năng (`feature`) sẽ có một thư mục `data/` riêng biệt đ
 ```
 lib/features/auth/data/
 ├── auth_repository.dart        # Chứa Interface, Implementation và Provider
+├── auth_repository.g.dart      # File tự động sinh cho Repository
 ├── auth_session_store.dart     # Quản lý Session (Token)
-└── auth_repository.g.dart      # File tự động sinh (Generator)
+└── auth_session_store.g.dart   # File tự động sinh cho Session Store
 ```
 
 ---
@@ -39,14 +40,16 @@ class AuthRepositoryImpl implements AuthRepository {
 
 ## 3. Tại sao Data Layer có Provider?
 
-Để giữ cho code "neat & clean" (gọn gàng), chúng ta đặt Provider khai báo Repository ngay trong cùng file dữ liệu.
+Để giữ cho code "neat & clean" (gọn gàng), chúng ta đặt Provider khai báo Repository ngay trong cùng file dữ liệu. Dự án tuân thủ Riverpod 3.0 (phải khai báo `dependencies` rõ ràng).
 
 **Mục đích:**
-1.  **Dependency Injection (DI)**: Tự động cung cấp `Dio` hoặc các `Store` khác vào Repository.
-2.  **Singleton**: Đảm bảo toàn bộ App chỉ dùng duy nhất 1 instance của Repository đó.
+1.  **Dependency Injection (DI)**: Tự động cung cấp `Dio`, `SecureStorage` hoặc các `Store` khác vào Repository.
+2.  **Testability**: Dễ dàng override các Provider này bằng mock/fake trong môi trường test mà không cần can thiệp vào code main.
+3.  **Instance Management**: Riverpod quản lý vòng đời (Lifecycle) của instance, đảm bảo dùng chung instance (Singleton) thông qua `keepAlive: true`.
 
 ```dart
-@Riverpod(dependencies: [apiClient, authSessionStore])
+// Ví dụ khai báo chuẩn tại lib/features/auth/data/auth_repository.dart
+@Riverpod(dependencies: [apiClient, authSessionStore, secureStorage])
 AuthRepository authRepository(Ref ref) {
   return AuthRepositoryImpl(
     ref.watch(apiClientProvider),
@@ -59,14 +62,19 @@ AuthRepository authRepository(Ref ref) {
 
 ## 4. Quản lý lưu trữ (Stores)
 
-Dự án chia làm 2 loại lưu trữ dữ liệu local chính:
+Dự án sử dụng Dependency Injection cho toàn bộ hệ thống lưu trữ:
 
-| Loại lưu trữ | Công nghệ sử dụng | Khi nào dùng? |
-| :--- | :--- | :--- |
-| **Secure Store** | `flutter_secure_storage` | Lưu Token, API Key (Dữ liệu nhạy cảm). |
-| **Prefs Store** | `shared_preferences` | Lưu Theme mode, Ngôn ngữ, ghi nhớ Login. |
+| Loại lưu trữ | Công nghệ | Provider | Mục đích |
+| :--- | :--- | :--- | :--- |
+| **Secure Store** | `flutter_secure_storage` | `secureStorageProvider` | Lưu Token, API Key (Dữ liệu nhạy cảm). |
+| **Prefs Store** | `shared_preferences` | `preferencesStorageProvider` | Lưu Theme mode, Ngôn ngữ, cài đặt UI. |
 
-*Lưu ý: Luôn sử dụng class `AuthSessionStore` để quản lý Token thay vì gọi trực tiếp Storage ở khắp nơi.*
+**Luồng hoạt động:**
+1.  `secureStorageProvider` khởi tạo instance Native storage.
+2.  `authSessionStoreProvider` nhận `SecureStorage` instance và quản lý logic Token.
+3.  `AuthRepository` nhận `AuthSessionStore` để thực hiện ghi Token sau khi Login thành công.
+
+*Lưu ý: Tuyệt đối không dùng Singleton pattern kiểu `AuthSessionStore.instance`. Hãy dùng Riverpod để inject dependency.*
 
 ---
 
@@ -74,7 +82,8 @@ Dự án chia làm 2 loại lưu trữ dữ liệu local chính:
 
 1.  **Không gọi UI trực tiếp**: Tuyệt đối không import bất kỳ widget nào vào tầng Data.
 2.  **Xử lý Exception**: Các lỗi API nên được ném (throw) dưới dạng `AppException` để tầng Logic xử lý và hiển thị thông báo.
-3.  **Generator**: Sau khi sửa bất kỳ file nào có `@riverpod`, hãy chạy lệnh `fvm flutter pub run build_runner build`.
+3.  **Generator**: Sau khi sửa bất kỳ file nào có `@Riverpod`, hãy chạy lệnh `fvm flutter pub run build_runner build`.
+4.  **Dependencies**: Khi thêm một Provider mới phụ thuộc vào các Provider khác, bạn PHẢI khai báo chúng trong danh sách `dependencies` của annotation `@Riverpod`.
 
 ---
-*Tầng Data là nền móng của ứng dụng, hãy giữ nó luôn sạch sẽ và dễ hiểu.*
+*Tầng Data là nền móng của ứng dụng, hãy giữ nó luôn sạch sẽ và quản lý dependency thông qua Riverpod.*
