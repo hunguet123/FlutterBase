@@ -7,10 +7,10 @@ part of 'auth_session_notifier.dart';
 // **************************************************************************
 
 String _$authSessionNotifierHash() =>
-    r'16899f0b59f7feba81d76f4f86b15773622b8a16';
+    r'e9668428b1d776bf6b2a09518e80037de30df75f';
 
 /// App-level auth session: tracks login status and handles logout.
-/// Lives in app/ because it is consumed by routing and any feature,
+/// Lives in app/session/ because it is consumed by routing and any feature,
 /// not just the auth feature itself.
 ///
 /// Copied from [AuthSessionNotifier].
@@ -25,11 +25,14 @@ final authSessionNotifierProvider =
               : _$authSessionNotifierHash,
       dependencies: <ProviderOrFamily>[
         authRepositoryProvider,
+        logoutUseCaseProvider,
         analyticsProvider,
       ],
       allTransitiveDependencies: <ProviderOrFamily>{
         authRepositoryProvider,
         ...?authRepositoryProvider.allTransitiveDependencies,
+        logoutUseCaseProvider,
+        ...?logoutUseCaseProvider.allTransitiveDependencies,
         analyticsProvider,
         ...?analyticsProvider.allTransitiveDependencies,
       },

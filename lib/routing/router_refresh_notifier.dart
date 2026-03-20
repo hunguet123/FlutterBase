@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:flutter_base/app/providers/app_auth_provider.dart';
+import 'package:flutter_base/app/session/app_auth_provider.dart';
 import 'package:flutter_base/app/providers/app_maintenance_provider.dart';
 
 part 'router_refresh_notifier.g.dart';

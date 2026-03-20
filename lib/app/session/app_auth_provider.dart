@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:flutter_base/app/providers/auth_session_notifier.dart';
+import 'package:flutter_base/app/session/auth_session_notifier.dart';
 
 part 'app_auth_provider.g.dart';
 
