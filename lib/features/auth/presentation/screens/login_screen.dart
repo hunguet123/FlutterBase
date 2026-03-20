@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter_base/l10n/strings.g.dart';
-import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
@@ -42,8 +40,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       await ref.read(authNotifierProvider.notifier).login(username, password);
-      if (!mounted) return;
-      context.go(AppRoutes.home);
     } on MaintenanceException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

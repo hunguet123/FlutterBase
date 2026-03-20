@@ -15,9 +15,8 @@ String _$remoteConfigHash() => r'a82c79ffd46bb1d68ede94b06c93c5bc07955a18';
 final remoteConfigProvider = Provider<FirebaseRemoteConfig>.internal(
   remoteConfig,
   name: r'remoteConfigProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$remoteConfigHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$remoteConfigHash,
   dependencies: const <ProviderOrFamily>[],
   allTransitiveDependencies: const <ProviderOrFamily>{},
 );

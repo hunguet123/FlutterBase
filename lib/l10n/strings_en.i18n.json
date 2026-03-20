@@ -16,5 +16,8 @@
     "title": "Home",
     "welcome": "Welcome!",
     "logout": "Logout"
+  },
+  "maintenance": {
+    "retry": "Retry"
   }
 }

@@ -7,6 +7,6 @@ abstract final class AnalyticsEvents {
   static const String logout = 'logout';
 
   // Screen names (for logScreenView)
-  static const String screenLogin = 'login';
-  static const String screenHome = 'home';
+  static const String screenLogin = 'screen_login';
+  static const String screenHome = 'screen_home';
 }

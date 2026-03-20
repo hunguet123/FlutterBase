@@ -6,7 +6,7 @@ part of 'api_client_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'7c7e08a263e71c19bea0524aed228c4627a0025c';
+String _$apiClientHash() => r'eb87b33acecbb33fcd9cf999aae354484227a03a';
 
 /// Provides configured Dio instance for API calls.
 ///
@@ -15,13 +15,17 @@ String _$apiClientHash() => r'7c7e08a263e71c19bea0524aed228c4627a0025c';
 final apiClientProvider = Provider<Dio>.internal(
   apiClient,
   name: r'apiClientProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$apiClientHash,
-  dependencies: <ProviderOrFamily>[authSessionStoreProvider],
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$apiClientHash,
+  dependencies: <ProviderOrFamily>[
+    authSessionStoreProvider,
+    secureStorageProvider,
+  ],
   allTransitiveDependencies: <ProviderOrFamily>{
     authSessionStoreProvider,
     ...?authSessionStoreProvider.allTransitiveDependencies,
+    secureStorageProvider,
+    ...?secureStorageProvider.allTransitiveDependencies,
   },
 );
 

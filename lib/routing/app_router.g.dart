@@ -7,7 +7,7 @@ part of 'app_router.dart';
 // **************************************************************************
 
 String _$authRefreshNotifierHash() =>
-    r'df767a96cdeb006cafc9b995ac2e71b6acf70352';
+    r'eb696d658671aa9278818defe63191990ed86e5b';
 
 /// Provider for GoRouterRefreshNotifier.
 ///
@@ -17,14 +17,16 @@ final authRefreshNotifierProvider =
     AutoDisposeProvider<Raw<GoRouterRefreshNotifier>>.internal(
       authRefreshNotifier,
       name: r'authRefreshNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$authRefreshNotifierHash,
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$authRefreshNotifierHash,
       dependencies: <ProviderOrFamily>{
         authNotifierProvider,
         authRepositoryProvider,
         apiClientProvider,
         authSessionStoreProvider,
+        secureStorageProvider,
         remoteConfigProvider,
         analyticsProvider,
       },
@@ -37,6 +39,8 @@ final authRefreshNotifierProvider =
         ...?apiClientProvider.allTransitiveDependencies,
         authSessionStoreProvider,
         ...?authSessionStoreProvider.allTransitiveDependencies,
+        secureStorageProvider,
+        ...?secureStorageProvider.allTransitiveDependencies,
         remoteConfigProvider,
         ...?remoteConfigProvider.allTransitiveDependencies,
         analyticsProvider,
@@ -48,7 +52,7 @@ final authRefreshNotifierProvider =
 // ignore: unused_element
 typedef AuthRefreshNotifierRef =
     AutoDisposeProviderRef<Raw<GoRouterRefreshNotifier>>;
-String _$routerHash() => r'0bc675725d30336a2216e990d1f996ce89f424f9';
+String _$routerHash() => r'8f592275f702f424d8d6f8241cb1fb16bc91d17f';
 
 /// Provider for application router.
 ///
@@ -57,15 +61,15 @@ String _$routerHash() => r'0bc675725d30336a2216e990d1f996ce89f424f9';
 final routerProvider = AutoDisposeProvider<GoRouter>.internal(
   router,
   name: r'routerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$routerHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$routerHash,
   dependencies: <ProviderOrFamily>{
     authRefreshNotifierProvider,
     authNotifierProvider,
     authRepositoryProvider,
     apiClientProvider,
     authSessionStoreProvider,
+    secureStorageProvider,
     remoteConfigProvider,
     analyticsProvider,
   },
@@ -80,6 +84,8 @@ final routerProvider = AutoDisposeProvider<GoRouter>.internal(
     ...?apiClientProvider.allTransitiveDependencies,
     authSessionStoreProvider,
     ...?authSessionStoreProvider.allTransitiveDependencies,
+    secureStorageProvider,
+    ...?secureStorageProvider.allTransitiveDependencies,
     remoteConfigProvider,
     ...?remoteConfigProvider.allTransitiveDependencies,
     analyticsProvider,

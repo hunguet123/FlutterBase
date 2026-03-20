@@ -6,7 +6,7 @@ part of 'auth_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authRepositoryHash() => r'e0f6cb0d8604e0eac9cd3c63d279ed79ea83305c';
+String _$authRepositoryHash() => r'00970cb90107126371ed4fff502085efb9c6f236';
 
 /// Provider for [AuthRepository]. Defines itself in the data layer for neatness.
 ///
@@ -15,15 +15,22 @@ String _$authRepositoryHash() => r'e0f6cb0d8604e0eac9cd3c63d279ed79ea83305c';
 final authRepositoryProvider = AutoDisposeProvider<AuthRepository>.internal(
   authRepository,
   name: r'authRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$authRepositoryHash,
-  dependencies: <ProviderOrFamily>[apiClientProvider, authSessionStoreProvider],
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$authRepositoryHash,
+  dependencies: <ProviderOrFamily>[
+    apiClientProvider,
+    authSessionStoreProvider,
+    secureStorageProvider,
+  ],
   allTransitiveDependencies: <ProviderOrFamily>{
     apiClientProvider,
     ...?apiClientProvider.allTransitiveDependencies,
     authSessionStoreProvider,
     ...?authSessionStoreProvider.allTransitiveDependencies,
+    secureStorageProvider,
+    ...?secureStorageProvider.allTransitiveDependencies,
   },
 );
 

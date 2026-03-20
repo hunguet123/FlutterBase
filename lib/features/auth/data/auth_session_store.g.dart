@@ -6,20 +6,24 @@ part of 'auth_session_store.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authSessionStoreHash() => r'c58e836968d7bee2a53a6ee2df56b0febde34d1a';
+String _$authSessionStoreHash() => r'2eccda9f055a99336a27eddea404dd59dde64a2b';
 
-/// Provider for AuthSessionStore. Uses the singleton instance.
+/// Provider for AuthSessionStore. Depends on [secureStorageProvider] for testability.
 ///
 /// Copied from [authSessionStore].
 @ProviderFor(authSessionStore)
 final authSessionStoreProvider = Provider<AuthSessionStore>.internal(
   authSessionStore,
   name: r'authSessionStoreProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$authSessionStoreHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$authSessionStoreHash,
+  dependencies: <ProviderOrFamily>[secureStorageProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    secureStorageProvider,
+    ...?secureStorageProvider.allTransitiveDependencies,
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

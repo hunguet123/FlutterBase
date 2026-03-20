@@ -1,4 +1,3 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -12,28 +11,7 @@ const _refreshTokenKey = 'refresh_token';
 /// Manages auth tokens in SecureStorage with in-memory cache for sync access.
 /// Used by [AuthInterceptor] (sync) and [AuthRepository].
 final class AuthSessionStore {
-  AuthSessionStore._(this._secureStorage);
-
-  static AuthSessionStore? _instance;
-
-  /// Default instance. Initialized with built-in [SecureStorage] implementation.
-  static AuthSessionStore get instance {
-    _instance ??= AuthSessionStore._(
-      SecureStorageImpl(FlutterSecureStorage(
-        aOptions: const AndroidOptions(encryptedSharedPreferences: true),
-      )),
-    );
-    return _instance!;
-  }
-
-  /// Override for tests. Call with a [FakeSecureStorage] or mock.
-  static void initWith(SecureStorage storage) {
-    _instance = AuthSessionStore._(storage);
-  }
-
-  static void resetForTesting() {
-    _instance = null;
-  }
+  AuthSessionStore(this._secureStorage);
 
   final SecureStorage _secureStorage;
 
@@ -64,8 +42,8 @@ final class AuthSessionStore {
   Future<String?> getRefreshToken() => _secureStorage.read(_refreshTokenKey);
 }
 
-/// Provider for AuthSessionStore. Uses the singleton instance.
-@Riverpod(keepAlive: true, dependencies: [])
+/// Provider for AuthSessionStore. Depends on [secureStorageProvider] for testability.
+@Riverpod(keepAlive: true, dependencies: [secureStorage])
 AuthSessionStore authSessionStore(Ref ref) {
-  return AuthSessionStore.instance;
+  return AuthSessionStore(ref.watch(secureStorageProvider));
 }

@@ -3,6 +3,7 @@ import 'package:flutter_base/core/config/remote_config_provider.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/analytics_provider.dart';
+import 'package:flutter_base/core/storage/secure_storage.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
@@ -16,6 +17,7 @@ part 'auth_provider.g.dart';
     authRepository,
     apiClient,
     authSessionStore,
+    secureStorage,
     remoteConfig,
     analytics,
   ],

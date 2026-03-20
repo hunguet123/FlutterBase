@@ -9,7 +9,7 @@ class MaintenanceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final translations = t;
+    final translations = Translations.of(context);
 
     return Scaffold(
       appBar: AppAppBar(
@@ -38,8 +38,12 @@ class MaintenanceScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: () => ref.invalidate(remoteConfigProvider),
-                child: const Text('Thử lại'),
+                onPressed: () async {
+                  final remoteConfig = ref.read(remoteConfigProvider);
+                  await remoteConfig.fetchAndActivate();
+                  ref.invalidate(remoteConfigProvider);
+                },
+                child: Text(translations.maintenance.retry),
               ),
             ],
           ),
@@ -48,3 +52,4 @@ class MaintenanceScreen extends ConsumerWidget {
     );
   }
 }
+

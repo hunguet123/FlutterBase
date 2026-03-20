@@ -15,9 +15,10 @@ String _$firebaseMessagingHash() => r'be66e6974401fb285741260c9c8b6a7ee0144368';
 final firebaseMessagingProvider = Provider<FirebaseMessaging>.internal(
   firebaseMessaging,
   name: r'firebaseMessagingProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$firebaseMessagingHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$firebaseMessagingHash,
   dependencies: const <ProviderOrFamily>[],
   allTransitiveDependencies: const <ProviderOrFamily>{},
 );
@@ -32,9 +33,8 @@ String _$fcmServiceHash() => r'4c449e65e6c07564fbdec24479a2a2ee98e0ab65';
 final fcmServiceProvider = Provider<FcmService>.internal(
   fcmService,
   name: r'fcmServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$fcmServiceHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$fcmServiceHash,
   dependencies: <ProviderOrFamily>[firebaseMessagingProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     firebaseMessagingProvider,

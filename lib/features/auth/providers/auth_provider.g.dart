@@ -6,20 +6,20 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authNotifierHash() => r'18eeabe9b33130fcc9d92a8858d292d5618bdea4';
+String _$authNotifierHash() => r'd8b22e7fc26e14bf78e2c555be640f4e8543ac12';
 
 /// See also [AuthNotifier].
 @ProviderFor(AuthNotifier)
 final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, bool>.internal(
   AuthNotifier.new,
   name: r'authNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$authNotifierHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$authNotifierHash,
   dependencies: <ProviderOrFamily>{
     authRepositoryProvider,
     apiClientProvider,
     authSessionStoreProvider,
+    secureStorageProvider,
     remoteConfigProvider,
     analyticsProvider,
   },
@@ -30,6 +30,8 @@ final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, bool>.internal(
     ...?apiClientProvider.allTransitiveDependencies,
     authSessionStoreProvider,
     ...?authSessionStoreProvider.allTransitiveDependencies,
+    secureStorageProvider,
+    ...?secureStorageProvider.allTransitiveDependencies,
     remoteConfigProvider,
     ...?remoteConfigProvider.allTransitiveDependencies,
     analyticsProvider,

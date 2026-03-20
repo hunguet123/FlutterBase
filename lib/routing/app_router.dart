@@ -10,6 +10,7 @@ import 'package:flutter_base/features/home/presentation/screens/home_screen.dart
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
+import 'package:flutter_base/core/storage/secure_storage.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:flutter_base/core/config/remote_config_keys.dart';
 import 'package:flutter_base/core/config/remote_config_provider.dart';
@@ -115,14 +116,24 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
     authRepository,
     apiClient,
     authSessionStore,
+    secureStorage,
     remoteConfig,
     analytics,
   ],
 )
 Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
-  final authAsync = ref.watch(authNotifierProvider);
+  final authAsync = ref.read(authNotifierProvider);
   final isLoggedIn = authAsync.asData?.value ?? false;
-  return GoRouterRefreshNotifier(isLoggedIn);
+  final notifier = GoRouterRefreshNotifier(isLoggedIn);
+
+  ref.listen<AsyncValue<bool>>(
+    authNotifierProvider,
+    (_, next) => notifier.update(next.asData?.value ?? false),
+  );
+
+  ref.onDispose(notifier.dispose);
+
+  return notifier;
 }
 
 /// Provider for application router.
@@ -133,13 +144,14 @@ Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
     authRepository,
     apiClient,
     authSessionStore,
+    secureStorage,
     remoteConfig,
     analytics,
   ],
 )
 GoRouter router(Ref ref) {
-  final refreshNotifier = ref.watch(authRefreshNotifierProvider);
-  final analytics = ref.watch(analyticsProvider);
-  final remoteConfig = ref.watch(remoteConfigProvider);
+  final refreshNotifier = ref.read(authRefreshNotifierProvider);
+  final analytics = ref.read(analyticsProvider);
+  final remoteConfig = ref.read(remoteConfigProvider);
   return createAppRouter(refreshNotifier, analytics, remoteConfig);
 }

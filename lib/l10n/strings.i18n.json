@@ -16,5 +16,8 @@
     "title": "Trang chủ",
     "welcome": "Chào mừng!",
     "logout": "Đăng xuất"
+  },
+  "maintenance": {
+    "retry": "Thử lại"
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'secure_storage.g.dart';
 
 /// Interface for encrypted key-value storage.
 /// Use for sensitive data: tokens, secrets, etc.
@@ -30,10 +33,13 @@ class SecureStorageImpl implements SecureStorage {
   Future<void> clear() => _storage.deleteAll();
 }
 
-/// Provider for [SecureStorage]. Override in tests with [FakeSecureStorage].
-final secureStorageProvider = Provider<SecureStorage>((ref) {
-  const storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+@Riverpod(keepAlive: true, dependencies: [])
+SecureStorage secureStorage(Ref ref) {
+  return SecureStorageImpl(
+    const FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    ),
   );
-  return SecureStorageImpl(storage);
-});
+}
+
+

@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 12
+/// Strings: 13
 ///
-/// Built on 2026-03-20 at 02:48 UTC
+/// Built on 2026-03-20 at 04:37 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -150,6 +150,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final _StringsAppVi app = _StringsAppVi._(_root);
 	late final _StringsLoginVi login = _StringsLoginVi._(_root);
 	late final _StringsHomeVi home = _StringsHomeVi._(_root);
+	late final _StringsMaintenanceVi maintenance = _StringsMaintenanceVi._(_root);
 }
 
 // Path: app
@@ -191,6 +192,16 @@ class _StringsHomeVi {
 	String get logout => 'Đăng xuất';
 }
 
+// Path: maintenance
+class _StringsMaintenanceVi {
+	_StringsMaintenanceVi._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get retry => 'Thử lại';
+}
+
 /// Flat map(s) containing all translations.
 /// Only for edge cases! For simple maps, use the map function of this library.
 
@@ -209,6 +220,7 @@ extension on Translations {
 			case 'home.title': return 'Trang chủ';
 			case 'home.welcome': return 'Chào mừng!';
 			case 'home.logout': return 'Đăng xuất';
+			case 'maintenance.retry': return 'Thử lại';
 			default: return null;
 		}
 	}

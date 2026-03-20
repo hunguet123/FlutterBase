@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
+import 'package:flutter_base/core/storage/secure_storage.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -68,15 +69,12 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> hasSession() async {
     final token = _sessionStore.accessToken;
-    if (token != null && token.isNotEmpty) return true;
-    await _sessionStore.loadFromStorage();
-    final tokenAfter = _sessionStore.accessToken;
-    return tokenAfter != null && tokenAfter.isNotEmpty;
+    return token != null && token.isNotEmpty;
   }
 }
 
 /// Provider for [AuthRepository]. Defines itself in the data layer for neatness.
-@Riverpod(dependencies: [apiClient, authSessionStore])
+@Riverpod(dependencies: [apiClient, authSessionStore, secureStorage])
 AuthRepository authRepository(Ref ref) {
   final dio = ref.watch(apiClientProvider);
   final sessionStore = ref.watch(authSessionStoreProvider);
