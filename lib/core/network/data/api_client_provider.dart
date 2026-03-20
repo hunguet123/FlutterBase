@@ -10,7 +10,7 @@ part 'api_client_provider.g.dart';
 /// Provides configured Dio instance for API calls.
 /// Depends on [authTokenProviderRef] which must be overridden at the
 /// composition root with the concrete [AuthTokenProvider] implementation.
-@Riverpod(keepAlive: true, dependencies: [])
+@Riverpod(keepAlive: true)
 Dio apiClient(Ref ref) {
   final tokenProvider = ref.watch(authTokenProviderRef);
   return createApiClient(tokenProvider);

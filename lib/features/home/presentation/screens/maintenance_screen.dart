@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:flutter_base/core/config/data/app_config_provider.dart';
+import 'package:flutter_base/core/config/remote_config_provider.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_base/core/config/remote_config_provider.dart';
 
 class MaintenanceScreen extends ConsumerWidget {
   const MaintenanceScreen({super.key});
@@ -39,9 +41,8 @@ class MaintenanceScreen extends ConsumerWidget {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () async {
-                  final remoteConfig = ref.read(remoteConfigProvider);
-                  await remoteConfig.fetchAndActivate();
-                  ref.invalidate(remoteConfigProvider);
+                  await ref.read(remoteConfigProvider).fetchAndActivate();
+                  ref.invalidate(appConfigProvider);
                 },
                 child: Text(translations.maintenance.retry),
               ),
@@ -52,4 +53,3 @@ class MaintenanceScreen extends ConsumerWidget {
     );
   }
 }
-

@@ -7,7 +7,7 @@ part 'app_maintenance_provider.g.dart';
 
 /// App-level maintenance flag for routing.
 /// Reactive: updates whenever Remote Config pushes a new value.
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [appConfig])
 bool appIsMaintenance(Ref ref) {
   return ref.watch(appConfigProvider).maintenanceMode;
 }

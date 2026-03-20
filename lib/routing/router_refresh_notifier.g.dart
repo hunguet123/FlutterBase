@@ -7,7 +7,7 @@ part of 'router_refresh_notifier.dart';
 // **************************************************************************
 
 String _$routerRefreshNotifierHash() =>
-    r'00b699cd27d401bcc5328eede069ced7af083975';
+    r'4b5f0a16b6319ad5f99d6f4f0a671d915346d05f';
 
 /// See also [routerRefreshNotifier].
 @ProviderFor(routerRefreshNotifier)
@@ -19,8 +19,16 @@ final routerRefreshNotifierProvider =
           const bool.fromEnvironment('dart.vm.product')
               ? null
               : _$routerRefreshNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
+      dependencies: <ProviderOrFamily>[
+        appIsLoggedInProvider,
+        appIsMaintenanceProvider,
+      ],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        appIsLoggedInProvider,
+        ...?appIsLoggedInProvider.allTransitiveDependencies,
+        appIsMaintenanceProvider,
+        ...?appIsMaintenanceProvider.allTransitiveDependencies,
+      },
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

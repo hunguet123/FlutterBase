@@ -6,7 +6,7 @@ part of 'app_auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appIsLoggedInHash() => r'8eb9a32a52ee87635f564e14ecc10b46934ae0bd';
+String _$appIsLoggedInHash() => r'01f12734c6297e034b1d446050c9c98fd3391d61';
 
 /// App-level auth status for routing/composition root.
 /// Keeps `GoRouter` independent from auth feature state shape.
@@ -20,8 +20,11 @@ final appIsLoggedInProvider = Provider<bool>.internal(
       const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$appIsLoggedInHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
+  dependencies: <ProviderOrFamily>[authSessionNotifierProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    authSessionNotifierProvider,
+    ...?authSessionNotifierProvider.allTransitiveDependencies,
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

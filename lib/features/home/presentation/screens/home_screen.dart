@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_base/app/providers/auth_session_notifier.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_routes.dart';
-import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
-import 'package:flutter_base/app/providers/auth_session_notifier.dart';
+import 'package:flutter_base/shared/widgets/app_button.dart';
 
 /// Home screen shown after successful login.
 class HomeScreen extends ConsumerWidget {
@@ -23,11 +23,7 @@ class HomeScreen extends ConsumerWidget {
           IconButton(
             key: const Key('logoutIcon'),
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authSessionNotifierProvider.notifier).logout();
-              if (!context.mounted) return;
-              context.go(AppRoutes.login);
-            },
+            onPressed: () => _logout(context, ref),
           ),
         ],
       ),
@@ -44,11 +40,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               AppButton(
-                onPressed: () async {
-                  await ref.read(authSessionNotifierProvider.notifier).logout();
-                  if (!context.mounted) return;
-                  context.go(AppRoutes.login);
-                },
+                onPressed: () => _logout(context, ref),
                 text: translations.home.logout,
               ),
             ],
@@ -56,5 +48,11 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _logout(BuildContext context, WidgetRef ref) async {
+    await ref.read(authSessionNotifierProvider.notifier).logout();
+    if (!context.mounted) return;
+    context.go(AppRoutes.login);
   }
 }

@@ -35,7 +35,7 @@ class RouterRefreshNotifier extends ChangeNotifier {
   }
 }
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [appIsLoggedIn, appIsMaintenance])
 Raw<RouterRefreshNotifier> routerRefreshNotifier(Ref ref) {
   final notifier = RouterRefreshNotifier(
     isLoggedIn: ref.read(appIsLoggedInProvider),

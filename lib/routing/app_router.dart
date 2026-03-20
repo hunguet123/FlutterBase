@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:flutter_base/core/analytics/data/analytics_events.dart';
+import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/data/analytics_provider.dart';
 import 'package:flutter_base/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
@@ -55,7 +55,7 @@ GoRouter createAppRouter(RouterRefreshNotifier refreshNotifier, AnalyticsRouteOb
 }
 
 /// Provider for application router.
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [routerRefreshNotifier, analytics])
 GoRouter router(Ref ref) {
   final refreshNotifier = ref.read(routerRefreshNotifierProvider);
   final analytics = ref.read(analyticsProvider);

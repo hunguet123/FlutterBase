@@ -21,3 +21,8 @@ class AuthException extends AppException {
 class ValidationException extends AppException {
   ValidationException(super.message);
 }
+
+/// Thrown when a network/API call fails.
+class NetworkException extends AppException {
+  NetworkException(super.message);
+}

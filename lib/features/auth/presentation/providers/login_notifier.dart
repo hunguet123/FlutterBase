@@ -1,4 +1,4 @@
-import 'package:flutter_base/core/analytics/data/analytics_events.dart';
+import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/data/analytics_provider.dart';
 import 'package:flutter_base/features/auth/data/login_use_case_provider.dart';
 import 'package:flutter_base/app/providers/auth_session_notifier.dart';
@@ -7,7 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_notifier.g.dart';
 
-@Riverpod(dependencies: [loginUseCase, analytics])
+@Riverpod(dependencies: [loginUseCase, analytics, AuthSessionNotifier])
 class LoginNotifier extends _$LoginNotifier {
   @override
   LoginState build() => LoginState.initial();

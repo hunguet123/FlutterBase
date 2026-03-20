@@ -1,4 +1,4 @@
-import 'package:flutter_base/core/analytics/data/analytics_events.dart';
+import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/data/analytics_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
 import 'package:flutter_base/features/auth/domain/repositories/auth_repository.dart';

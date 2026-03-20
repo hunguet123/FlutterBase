@@ -6,7 +6,7 @@ part of 'app_maintenance_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appIsMaintenanceHash() => r'89a277b633bf0b613110faad083377d32e2ba7dc';
+String _$appIsMaintenanceHash() => r'f21f32de5782b75b03ee0c3ad71d81e2a5988fdc';
 
 /// App-level maintenance flag for routing.
 /// Reactive: updates whenever Remote Config pushes a new value.
@@ -20,8 +20,11 @@ final appIsMaintenanceProvider = Provider<bool>.internal(
       const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$appIsMaintenanceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
+  dependencies: <ProviderOrFamily>[appConfigProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    appConfigProvider,
+    ...?appConfigProvider.allTransitiveDependencies,
+  },
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

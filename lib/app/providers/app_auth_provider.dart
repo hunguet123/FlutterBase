@@ -7,7 +7,7 @@ part 'app_auth_provider.g.dart';
 
 /// App-level auth status for routing/composition root.
 /// Keeps `GoRouter` independent from auth feature state shape.
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [AuthSessionNotifier])
 bool appIsLoggedIn(Ref ref) {
   final authAsync = ref.watch(authSessionNotifierProvider);
   return authAsync.asData?.value.isLoggedIn ?? false;

@@ -6,7 +6,7 @@ part of 'api_client_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'e3ffa168c8df758f938d5d75a13c9d71575d809e';
+String _$apiClientHash() => r'58168cd23ca7bb05a1276fe1d6ff6840698fc115';
 
 /// Provides configured Dio instance for API calls.
 /// Depends on [authTokenProviderRef] which must be overridden at the
@@ -19,8 +19,8 @@ final apiClientProvider = Provider<Dio>.internal(
   name: r'apiClientProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$apiClientHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: null,
+  allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,13 +50,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           content: Text(Translations.of(context).login.maintenanceError),
         ),
       );
-    } on DioException catch (e) {
+    } on NetworkException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '${Translations.of(context).login.errorLogin}: ${e.message}',
-          ),
+          content: Text('${Translations.of(context).login.errorLogin}: ${e.message}'),
         ),
       );
     } catch (e) {
