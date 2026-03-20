@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:flutter_base/core/storage/secure_storage.dart';
+import 'package:flutter_base/features/auth/domain/models/auth_tokens.dart';
 
 part 'auth_session_store.g.dart';
 
@@ -20,12 +21,12 @@ final class AuthSessionStore {
   /// Sync access for [AuthInterceptor]. Must call [loadFromStorage] at app start.
   String? get accessToken => _accessTokenInMemory;
 
-  Future<void> setTokens(String accessToken, [String? refreshToken]) async {
-    await _secureStorage.write(_accessTokenKey, accessToken);
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await _secureStorage.write(_refreshTokenKey, refreshToken);
+  Future<void> setTokens(AuthTokens tokens) async {
+    await _secureStorage.write(_accessTokenKey, tokens.accessToken);
+    if (tokens.refreshToken != null && tokens.refreshToken!.isNotEmpty) {
+      await _secureStorage.write(_refreshTokenKey, tokens.refreshToken!);
     }
-    _accessTokenInMemory = accessToken;
+    _accessTokenInMemory = tokens.accessToken;
   }
 
   Future<void> loadFromStorage() async {

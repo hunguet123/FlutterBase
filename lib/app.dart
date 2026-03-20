@@ -19,17 +19,18 @@ class App extends ConsumerWidget {
 
     return authAsync.when(
       loading: () => _buildApp(
+        context,
         home: const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (_, _) => _buildApp(router: router),
-      data: (_) => _buildApp(router: router),
+      error: (_, _) => _buildApp(context, router: router),
+      data: (_) => _buildApp(context, router: router),
     );
   }
 
-  Widget _buildApp({GoRouter? router, Widget? home}) {
-    final translations = t;
+  Widget _buildApp(BuildContext context, {GoRouter? router, Widget? home}) {
+    final translations = Translations.of(context);
 
     final child = home != null
         ? MaterialApp(

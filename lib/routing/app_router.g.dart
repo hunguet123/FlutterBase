@@ -7,7 +7,7 @@ part of 'app_router.dart';
 // **************************************************************************
 
 String _$authRefreshNotifierHash() =>
-    r'64189022cb9baaedd0e7551878a8d831a5dc27d6';
+    r'd3f77ca95bdfc6ffd97ab32d7ee0f0e495894a9d';
 
 /// Provider for GoRouterRefreshNotifier.
 ///
@@ -21,37 +21,14 @@ final authRefreshNotifierProvider =
           const bool.fromEnvironment('dart.vm.product')
               ? null
               : _$authRefreshNotifierHash,
-      dependencies: <ProviderOrFamily>{
-        authNotifierProvider,
-        authRepositoryProvider,
-        apiClientProvider,
-        authSessionStoreProvider,
-        secureStorageProvider,
-        remoteConfigProvider,
-        analyticsProvider,
-      },
-      allTransitiveDependencies: <ProviderOrFamily>{
-        authNotifierProvider,
-        ...?authNotifierProvider.allTransitiveDependencies,
-        authRepositoryProvider,
-        ...?authRepositoryProvider.allTransitiveDependencies,
-        apiClientProvider,
-        ...?apiClientProvider.allTransitiveDependencies,
-        authSessionStoreProvider,
-        ...?authSessionStoreProvider.allTransitiveDependencies,
-        secureStorageProvider,
-        ...?secureStorageProvider.allTransitiveDependencies,
-        remoteConfigProvider,
-        ...?remoteConfigProvider.allTransitiveDependencies,
-        analyticsProvider,
-        ...?analyticsProvider.allTransitiveDependencies,
-      },
+      dependencies: null,
+      allTransitiveDependencies: null,
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRefreshNotifierRef = ProviderRef<Raw<GoRouterRefreshNotifier>>;
-String _$routerHash() => r'0a813d14ccde7395393b20dc733a98a96a5e89c2';
+String _$routerHash() => r'fe8152ef56eaa2156c2087dfe96882e758abd9d7';
 
 /// Provider for application router.
 ///
@@ -62,34 +39,8 @@ final routerProvider = Provider<GoRouter>.internal(
   name: r'routerProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$routerHash,
-  dependencies: <ProviderOrFamily>{
-    authRefreshNotifierProvider,
-    authNotifierProvider,
-    authRepositoryProvider,
-    apiClientProvider,
-    authSessionStoreProvider,
-    secureStorageProvider,
-    remoteConfigProvider,
-    analyticsProvider,
-  },
-  allTransitiveDependencies: <ProviderOrFamily>{
-    authRefreshNotifierProvider,
-    ...?authRefreshNotifierProvider.allTransitiveDependencies,
-    authNotifierProvider,
-    ...?authNotifierProvider.allTransitiveDependencies,
-    authRepositoryProvider,
-    ...?authRepositoryProvider.allTransitiveDependencies,
-    apiClientProvider,
-    ...?apiClientProvider.allTransitiveDependencies,
-    authSessionStoreProvider,
-    ...?authSessionStoreProvider.allTransitiveDependencies,
-    secureStorageProvider,
-    ...?secureStorageProvider.allTransitiveDependencies,
-    remoteConfigProvider,
-    ...?remoteConfigProvider.allTransitiveDependencies,
-    analyticsProvider,
-    ...?analyticsProvider.allTransitiveDependencies,
-  },
+  dependencies: null,
+  allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')

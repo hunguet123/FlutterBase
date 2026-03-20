@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
+import 'package:flutter_base/core/messaging/data/mappers/fcm_message_mapper.dart';
+import 'package:flutter_base/core/messaging/domain/models/fcm_token.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fcm_service.g.dart';
@@ -58,24 +60,27 @@ class FcmService {
     await requestPermission();
 
     final token = await getToken();
+    final fcmToken = token == null ? null : FcmToken(token);
     if (kDebugMode) {
-      log('FCM Token: $token');
+      log('FCM Token: ${fcmToken?.value}');
     }
 
     await _cancelForegroundSubscriptions();
 
     _tokenRefreshSub = onTokenRefresh.listen((newToken) {
       if (kDebugMode) {
-        log('FCM Token Refreshed: $newToken');
+        log('FCM Token Refreshed: ${FcmToken(newToken).value}');
       }
     });
 
     _onMessageSub = onMessage.listen((msg) {
-      log('FCM foreground: ${msg.notification?.title}');
+      final fcmMessage = fcmMessageFromRemoteMessage(msg);
+      log('FCM foreground: ${fcmMessage.title}');
     });
 
     _onMessageOpenedAppSub = onMessageOpenedApp.listen((msg) {
-      log('FCM opened: ${msg.data}');
+      final fcmMessage = fcmMessageFromRemoteMessage(msg);
+      log('FCM opened: ${fcmMessage.data}');
     });
   }
 

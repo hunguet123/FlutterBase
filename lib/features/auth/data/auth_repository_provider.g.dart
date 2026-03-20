@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_repository.dart';
+part of 'auth_repository_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authRepositoryHash() => r'00970cb90107126371ed4fff502085efb9c6f236';
+String _$authRepositoryHash() => r'e0f6cb0d8604e0eac9cd3c63d279ed79ea83305c';
 
-/// Provider for [AuthRepository]. Defines itself in the data layer for neatness.
+/// Provides [AuthRepository] implementation.
 ///
 /// Copied from [authRepository].
 @ProviderFor(authRepository)
@@ -19,18 +19,12 @@ final authRepositoryProvider = AutoDisposeProvider<AuthRepository>.internal(
       const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$authRepositoryHash,
-  dependencies: <ProviderOrFamily>[
-    apiClientProvider,
-    authSessionStoreProvider,
-    secureStorageProvider,
-  ],
+  dependencies: <ProviderOrFamily>[apiClientProvider, authSessionStoreProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     apiClientProvider,
     ...?apiClientProvider.allTransitiveDependencies,
     authSessionStoreProvider,
     ...?authSessionStoreProvider.allTransitiveDependencies,
-    secureStorageProvider,
-    ...?secureStorageProvider.allTransitiveDependencies,
   },
 );
 

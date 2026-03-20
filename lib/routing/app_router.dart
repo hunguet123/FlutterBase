@@ -4,17 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
 
 import 'package:flutter_base/core/analytics/analytics_provider.dart';
+import 'package:flutter_base/core/config/data/app_config_provider.dart';
+import 'package:flutter_base/core/config/domain/models/app_config.dart';
 import 'package:flutter_base/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_base/routing/app_routes.dart';
-import 'package:flutter_base/features/auth/data/auth_repository.dart';
-import 'package:flutter_base/core/network/api_client_provider.dart';
-import 'package:flutter_base/core/storage/secure_storage.dart';
-import 'package:flutter_base/features/auth/data/auth_session_store.dart';
-import 'package:flutter_base/core/config/remote_config_keys.dart';
-import 'package:flutter_base/core/config/remote_config_provider.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_base/features/home/presentation/screens/maintenance_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,10 +27,7 @@ class _AnalyticsRouteObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
     final name = route.settings.name ?? route.settings.arguments?.toString();
     if (name != null && name.isNotEmpty) {
-      _analytics.logScreenView(
-        screenName: name,
-        screenClass: name,
-      );
+      _analytics.logScreenView(screenName: name, screenClass: name);
     }
   }
 }
@@ -45,7 +37,7 @@ class _AnalyticsRouteObserver extends NavigatorObserver {
 GoRouter createAppRouter(
   GoRouterRefreshNotifier refreshNotifier,
   FirebaseAnalytics analytics,
-  FirebaseRemoteConfig remoteConfig,
+  AppConfig appConfig,
 ) {
   return GoRouter(
     initialLocation: AppRoutes.login,
@@ -53,7 +45,7 @@ GoRouter createAppRouter(
     observers: [_AnalyticsRouteObserver(analytics)],
     redirect: (context, state) {
       // 1. Check Maintenance Mode first (Global switch)
-      final isMaintenance = remoteConfig.getBool(RemoteConfigKeys.maintenanceMode);
+      final isMaintenance = appConfig.maintenanceMode;
       final isOnMaintenance = state.matchedLocation == AppRoutes.maintenance;
 
       if (isMaintenance) {
@@ -110,18 +102,7 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
 }
 
 /// Provider for GoRouterRefreshNotifier.
-@Riverpod(
-  keepAlive: true,
-  dependencies: [
-    AuthNotifier,
-    authRepository,
-    apiClient,
-    authSessionStore,
-    secureStorage,
-    remoteConfig,
-    analytics,
-  ],
-)
+@Riverpod(keepAlive: true)
 Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
   final authAsync = ref.read(authNotifierProvider);
   final isLoggedIn = authAsync.asData?.value ?? false;
@@ -138,22 +119,10 @@ Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
 }
 
 /// Provider for application router.
-@Riverpod(
-  keepAlive: true,
-  dependencies: [
-    authRefreshNotifier,
-    AuthNotifier,
-    authRepository,
-    apiClient,
-    authSessionStore,
-    secureStorage,
-    remoteConfig,
-    analytics,
-  ],
-)
+@Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   final refreshNotifier = ref.read(authRefreshNotifierProvider);
   final analytics = ref.read(analyticsProvider);
-  final remoteConfig = ref.read(remoteConfigProvider);
-  return createAppRouter(refreshNotifier, analytics, remoteConfig);
+  final appConfig = ref.read(appConfigProvider);
+  return createAppRouter(refreshNotifier, analytics, appConfig);
 }
