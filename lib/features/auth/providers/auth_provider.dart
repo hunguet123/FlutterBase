@@ -1,8 +1,8 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:flutter_base/core/config/remote_config_keys.dart';
+import 'package:flutter_base/core/config/remote_config_service.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
+import 'package:flutter_base/core/analytics/analytics_service.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
 import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
 
@@ -18,11 +18,14 @@ class AuthNotifier extends AsyncNotifier<bool> {
   AuthRepository get _authRepository => ref.read(authRepositoryProvider);
 
   Future<void> login(String username, String password) async {
+    final remoteConfig = ref.read(remoteConfigProvider);
+    if (remoteConfig.getBool(RemoteConfigKeys.maintenanceMode)) {
+      throw Exception('Hệ thống đang bảo trì. Vui lòng thử lại sau.');
+    }
+
     state = await AsyncValue.guard(() async {
       await _authRepository.login(username, password);
-      if (Firebase.apps.isNotEmpty) {
-        FirebaseAnalytics.instance.logEvent(name: AnalyticsEvents.login);
-      }
+      ref.read(analyticsProvider).logEvent(name: AnalyticsEvents.login);
       return true;
     });
     state.whenOrNull(error: (e, _) => throw e);
@@ -30,9 +33,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
 
   Future<void> logout() async {
     await _authRepository.logout();
-    if (Firebase.apps.isNotEmpty) {
-      FirebaseAnalytics.instance.logEvent(name: AnalyticsEvents.logout);
-    }
+    ref.read(analyticsProvider).logEvent(name: AnalyticsEvents.logout);
     state = const AsyncValue.data(false);
   }
 }

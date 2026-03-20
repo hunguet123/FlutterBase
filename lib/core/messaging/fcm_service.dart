@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
 
 /// Provider for Firebase Messaging instance.
 final firebaseMessagingProvider =
@@ -41,6 +42,9 @@ class FcmService {
 
   /// Setup all listeners and request permissions.
   Future<void> init() async {
+    // Register background handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     await requestPermission();
 
     // Log token

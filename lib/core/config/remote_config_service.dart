@@ -1,6 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_base/core/config/remote_config_keys.dart';
 
 /// Provider for Firebase Remote Config instance.
 final remoteConfigProvider = Provider<FirebaseRemoteConfig>((ref) {
@@ -17,10 +18,10 @@ Future<void> initRemoteConfig(FirebaseRemoteConfig remoteConfig) async {
           : const Duration(hours: 1),
     ),
   );
-  await remoteConfig.setDefaults(const {
-    'feature_flag_login_enabled': true,
-    'api_timeout_seconds': 30,
-    'maintenance_mode': false,
+  await remoteConfig.setDefaults({
+    RemoteConfigKeys.featureFlagLoginEnabled: true,
+    RemoteConfigKeys.apiTimeoutSeconds: 30,
+    RemoteConfigKeys.maintenanceMode: false,
   });
   await remoteConfig.fetchAndActivate();
 }

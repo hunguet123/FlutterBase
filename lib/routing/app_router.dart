@@ -1,22 +1,27 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:flutter_base/core/analytics/analytics_events.dart';
+
+import 'package:flutter_base/core/analytics/analytics_service.dart';
 import 'package:flutter_base/features/auth/presentation/screens/login_screen.dart';
+import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_base/routing/app_routes.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// NavigatorObserver that logs screen views to Firebase Analytics.
 class _AnalyticsRouteObserver extends NavigatorObserver {
+  _AnalyticsRouteObserver(this._analytics);
+
+  final FirebaseAnalytics _analytics;
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
-    if (Firebase.apps.isEmpty) return; // Skip in tests
     final name = route.settings.name ?? route.settings.arguments?.toString();
     if (name != null && name.isNotEmpty) {
-      FirebaseAnalytics.instance.logScreenView(
+      _analytics.logScreenView(
         screenName: name,
         screenClass: name,
       );
@@ -26,11 +31,14 @@ class _AnalyticsRouteObserver extends NavigatorObserver {
 
 /// Application router configuration.
 /// [refreshNotifier] must be updated when auth state changes (e.g. from authNotifierProvider).
-GoRouter createAppRouter(GoRouterRefreshNotifier refreshNotifier) {
+GoRouter createAppRouter(
+  GoRouterRefreshNotifier refreshNotifier,
+  FirebaseAnalytics analytics,
+) {
   return GoRouter(
     initialLocation: AppRoutes.login,
     refreshListenable: refreshNotifier,
-    observers: [_AnalyticsRouteObserver()],
+    observers: [_AnalyticsRouteObserver(analytics)],
     redirect: (context, state) {
       final isLoggedIn = refreshNotifier.isLoggedIn;
       final isOnLogin = state.matchedLocation == AppRoutes.login;
@@ -72,3 +80,17 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
     }
   }
 }
+
+/// Provider for GoRouterRefreshNotifier.
+final authRefreshNotifierProvider = Provider<GoRouterRefreshNotifier>((ref) {
+  final authAsync = ref.watch(authNotifierProvider);
+  final isLoggedIn = authAsync.asData?.value ?? false;
+  return GoRouterRefreshNotifier(isLoggedIn);
+});
+
+/// Provider for application router.
+final routerProvider = Provider<GoRouter>((ref) {
+  final refreshNotifier = ref.watch(authRefreshNotifierProvider);
+  final analytics = ref.watch(analyticsProvider);
+  return createAppRouter(refreshNotifier, analytics);
+});
