@@ -13,17 +13,13 @@ import 'package:flutter_base/routing/app_routes.dart';
 
 /// Root app widget. Wraps MaterialApp with router, localization, theme.
 /// Also handles app-level events emitted by feature screens.
-class App extends ConsumerStatefulWidget {
+class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  ConsumerState<App> createState() => _AppState();
-}
-
-class _AppState extends ConsumerState<App> {
-  @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authAsync = ref.watch(authSessionNotifierProvider);
+    final router = ref.watch(routerProvider);
 
     ref.listen<AppEvent?>(appEventNotifierProvider, (_, event) async {
       switch (event) {
@@ -34,12 +30,6 @@ class _AppState extends ConsumerState<App> {
           break;
       }
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final authAsync = ref.watch(authSessionNotifierProvider);
-    final router = ref.watch(routerProvider);
 
     return authAsync.when(
       loading: () => _buildApp(

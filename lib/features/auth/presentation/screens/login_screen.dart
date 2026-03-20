@@ -21,23 +21,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _listenerRegistered = false;
+
   @override
   void initState() {
     super.initState();
-
-    ref.listen(loginNotifierProvider, (previous, next) {
-      final error = next.error;
-      if (error == null || error == previous?.error) return;
-
-      // Ensure the snackbar is shown after the current frame renders.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final t = Translations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_errorMessage(error, t))),
-        );
-      });
-    });
   }
 
   @override
@@ -67,7 +55,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    final isLoading = ref.watch(loginNotifierProvider).isLoading;
+    final loginState = ref.watch(loginNotifierProvider);
+    final isLoading = loginState.isLoading;
+
+    if (!_listenerRegistered) {
+      _listenerRegistered = true;
+      ref.listen(loginNotifierProvider, (previous, next) {
+        final error = next.error;
+        if (error == null || error == previous?.error) return;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_errorMessage(error, t))),
+          );
+        });
+      });
+    }
 
     return Scaffold(
       appBar: AppAppBar(title: t.login.title),
