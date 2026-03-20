@@ -1,7 +1,10 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:flutter_base/core/storage/secure_storage.dart';
+
+part 'auth_session_store.g.dart';
 
 const _accessTokenKey = 'access_token';
 const _refreshTokenKey = 'refresh_token';
@@ -62,6 +65,7 @@ final class AuthSessionStore {
 }
 
 /// Provider for AuthSessionStore. Uses the singleton instance.
-final authSessionStoreProvider = Provider<AuthSessionStore>((ref) {
+@Riverpod(keepAlive: true, dependencies: [])
+AuthSessionStore authSessionStore(Ref ref) {
   return AuthSessionStore.instance;
-});
+}

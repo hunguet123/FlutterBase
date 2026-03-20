@@ -6,7 +6,7 @@ Chào mừng bạn đến với dự án **Flutter Base**! Đây là tài liệu
 
 Dự án được xây dựng dựa trên các thư viện phổ biến và mạnh mẽ nhất trong hệ sinh thái Flutter:
 
-*   **State Management:** [Riverpod](https://riverpod.dev/) (phiên bản 2.x với Code Generation). Đây là "bộ não" quản lý dữ liệu và trạng thái của ứng dụng.
+*   **State Management:** [Riverpod](https://riverpod.dev/). Dự án sử dụng Code Generation và tuân thủ chuẩn Riverpod 3.0 (sử dụng kiểu `Ref` và `dependencies` rõ ràng). 
 *   **Routing:** [GoRouter](https://pub.dev/packages/go_router). Quản lý chuyển trang và xử lý điều hướng thông minh.
 *   **Networking:** [Dio](https://pub.dev/packages/dio). Thư viện HTTP client mạnh mẽ để gọi API.
 *   **Localization (Đa ngôn ngữ):** [Slang](https://pub.dev/packages/slang). Giúp quản lý chuỗi ký tự theo kiểu type-safe, giảm thiểu sai sót.
@@ -65,7 +65,7 @@ App sử dụng flavor để tách biệt môi trường **Development** và **P
 
 1.  **Code Generation:** Dự án sử dụng `build_runner`. Sau khi thêm Provider mới hoặc file ngôn ngữ, bạn cần chạy lệnh:
     ```bash
-    flutter pub run build_runner build --delete-conflicting-outputs
+    fvm flutter pub run build_runner build --delete-conflicting-outputs
     ```
 2.  **Đa ngôn ngữ:** Khi thêm chuỗi ký tự mới, hãy thêm vào file trong `lib/l10n/` và sử dụng thông qua object `t` (ví dụ: `t.auth.login_button`).
 3.  **UI Components:** Trước khi tạo một Widget mới, hãy kiểm tra thư mục `lib/shared/widgets/` xem đã có component tương tự chưa để tái sử dụng.

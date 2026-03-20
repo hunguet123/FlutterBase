@@ -9,7 +9,7 @@ sealed class AppException implements Exception {
 
 /// Thrown when the system is in maintenance mode.
 class MaintenanceException extends AppException {
-  MaintenanceException([String message = 'System is under maintenance']) : super(message);
+  MaintenanceException([super.message = 'System is under maintenance']);
 }
 
 /// Thrown for authentication-related errors.

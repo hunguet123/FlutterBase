@@ -23,7 +23,7 @@ class App extends ConsumerWidget {
           body: Center(child: CircularProgressIndicator()),
         ),
       ),
-      error: (_, __) => _buildApp(router: router),
+      error: (_, _) => _buildApp(router: router),
       data: (_) => _buildApp(router: router),
     );
   }

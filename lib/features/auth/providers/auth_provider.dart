@@ -1,19 +1,30 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_base/core/config/remote_config_keys.dart';
-import 'package:flutter_base/core/config/remote_config_service.dart';
+import 'package:flutter_base/core/config/remote_config_provider.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
-import 'package:flutter_base/core/analytics/analytics_service.dart';
+import 'package:flutter_base/core/analytics/analytics_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
 import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
+import 'package:flutter_base/core/network/api_client_provider.dart';
+import 'package:flutter_base/features/auth/data/auth_session_store.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final authNotifierProvider =
-    AsyncNotifierProvider<AuthNotifier, bool>(AuthNotifier.new);
+part 'auth_provider.g.dart';
 
-class AuthNotifier extends AsyncNotifier<bool> {
+@Riverpod(
+  keepAlive: true,
+  dependencies: [
+    authRepository,
+    apiClient,
+    authSessionStore,
+    remoteConfig,
+    analytics,
+  ],
+)
+class AuthNotifier extends _$AuthNotifier {
   @override
   Future<bool> build() async {
-    return ref.read(authRepositoryProvider).hasSession();
+    return ref.watch(authRepositoryProvider).hasSession();
   }
 
   AuthRepository get _authRepository => ref.read(authRepositoryProvider);

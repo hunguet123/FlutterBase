@@ -1,173 +1,153 @@
-# 🔥 Hướng dẫn Riverpod: Từ Cơ bản đến Nâng cao
+# 🔥 Hướng dẫn Riverpod: Dự án Flutter Base (Cập nhật chuẩn 2026)
 
-Chào mừng bạn đến với hướng dẫn sử dụng Riverpod cho dự án này. Tài liệu này được tổng hợp dựa trên tinh thần của tài liệu chính thức [Riverpod.dev](https://riverpod.dev/docs/concepts/about_providers) và áp dụng thực tế vào dự án của chúng ta.
-
----
-
-## 1. Provider là gì?
-Về cơ bản, một **Provider** là một "hàm được lưu nhớ" (memoized function). Nó bao bọc một logic xử lý, lưu trữ kết quả và cho phép nhiều nơi trong ứng dụng truy cập vào cùng một dữ liệu đó mà không cần khởi tạo lại.
-
-**Tại sao dùng Provider?**
--   **Thay thế Singleton/Service Locator:** Không cần dùng `GetIt` hay biến toàn cục khó kiểm soát.
--   **Dễ dàng kiểm thử:** Có thể ghi đè (override) dữ liệu giả cho mục đích testing.
--   **Tối ưu hiệu năng:** Chỉ rebuild những phần thực sự cần thiết khi dữ liệu thay đổi.
+Tài liệu này hướng dẫn chi tiết cách sử dụng Riverpod trong dự án, tuân thủ các quy tắc lint mới nhất và chuẩn bị cho Riverpod 3.0.
 
 ---
 
-## 2. Các loại Provider chính (Cách truyền thống)
+## 1. Nguyên tắc cốt lõi: Sử dụng Code Generation
+Dự án **bắt buộc** sử dụng `@riverpod` (Riverpod Generator). 
 
-| Loại Provider | Cách dùng |
-| :--- | :--- |
-| **Provider** | Dùng cho các giá trị không đổi hoặc các Service Class (Dio, Storage). |
-| **FutureProvider** | Dùng cho dữ liệu bất đồng bộ trả về 1 lần (gọi API lấy cấu hình). |
-| **StreamProvider** | Dùng cho dữ liệu luồng (Firebase Firestore, WebSockets). |
-| **NotifierProvider** | Quản lý trạng thái có thể thay đổi (Mutable state). |
-| **AsyncNotifierProvider** | Quản lý trạng thái bất đồng bộ có thể thay đổi (Auth, List dữ liệu). |
+**Tại sao?**
+-   **An toàn**: Cảnh báo lỗi ngay khi biên dịch thay vì lúc chạy.
+-   **Đơn giản**: Generator tự nhận diện kiểu trả về (Sync, Future, Stream).
+-   **Hiệu năng**: Mặc định là `autoDispose` (hủy khi không dùng) giúp tiết kiệm tài nguyên.
 
 ---
 
-## 3. Riverpod Generator (Phương pháp được khuyến nghị)
-Dự án của chúng ta ưu tiên sử dụng **Code Generation** (`@riverpod`) vì nó giúp viết code ngắn hơn, an toàn hơn và tự động xử lý kiểu dữ liệu.
+## 2. Các loại Provider thông dụng
 
-### 🔹 Cách tạo Provider đơn giản
+Trong Riverpod Generator, bạn chỉ cần quan tâm đến 2 cách khai báo chính: Dạng Hàm (Functional) và Dạng Lớp (Notifier).
+
+### 🔹 2.1. Functional Provider (Giá trị đọc một lần/Service)
+| Cú pháp (Generator) | Loại tương đương | Khi nào dùng? |
+| :--- | :--- | :--- |
+| `T name(Ref ref) => ...` | `Provider<T>` | Cung cấp Service (Dio, Storage). |
+| `Future<T> name(Ref ref) async => ...` | `FutureProvider<T>` | Gọi API lấy dữ liệu 1 lần. |
+
+**Ví dụ:**
 ```dart
-@riverpod
-String label(LabelRef ref) => 'Hello World';
+@Riverpod(keepAlive: true)
+FirebaseAnalytics analytics(Ref ref) => FirebaseAnalytics.instance;
 ```
 
-### 🔹 Cách tạo Async Notifier (Quản lý logic phức tạp)
-Dùng cho màn hình cần gọi API và có trạng thái Loading/Error.
+### 🔹 2.2. Notifier Provider (Quản lý logic & trạng thái)
+Dùng cho mọi logic liên quan đến API, có trạng thái Loading/Error tự động.
+
 ```dart
-@riverpod
-class ProductList extends _$ProductList {
+@Riverpod(keepAlive: true, dependencies: [authRepository])
+class AuthNotifier extends _$AuthNotifier {
   @override
-  Future<List<Product>> build() async {
-    // Khởi tạo lấy dữ liệu lần đầu
-    return ref.read(apiProvider).getProducts();
+  Future<bool> build() async {
+    return ref.watch(authRepositoryProvider).hasSession();
   }
 
-  Future<void> addProduct(Product p) async {
+  Future<void> login(String user, String pass) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => ...);
+    state = await AsyncValue.guard(() async {
+      await ref.read(authRepositoryProvider).login(user, pass);
+      return true;
+    });
   }
 }
 ```
 
-### 🔹 Lưu ý cực kỳ quan trọng về Code Generation
+---
 
-Khi bạn viết code với `@riverpod`, IDE sẽ báo **lỗi gạch đỏ** vì class cha (ví dụ: `_$ProductList`) chưa tồn tại. Đừng lo lắng! Đây là quy trình bình thường:
+## 3. Tìm hiểu về `AsyncValue`
 
-1.  **Gõ code**: Viết class và logic của bạn.
-2.  **Khởi chạy lệnh Gen**: Chạy lệnh `dart run build_runner build` (hoặc `watch`).
-3.  **Kết quả**: File `.g.dart` sẽ được tạo ra, lỗi gạch đỏ biến mất và biến `{tênClass}Provider` sẽ xuất hiện để bạn sử dụng.
+Khi bạn sử dụng các Provider bất đồng bộ ở trên (như `FutureProvider` hay `AsyncNotifier`), dữ liệu mà bạn nhận được sẽ được bao bọc trong lớp **`AsyncValue`**.
 
-> **💡 Mẹo nhỏ:** Hãy luôn chạy `dart run build_runner watch` trong suốt quá trình code để tiết kiệm thời gian chờ đợi.
+`AsyncValue` là cách Riverpod giúp bạn xử lý các tác vụ bất đồng bộ một các an toàn mà không cần dùng `FutureBuilder` hay `StreamBuilder` truyền thống.
 
-## 4. Cách sử dụng (Consuming)
+### 🔹 3.1. Ba trạng thái (States)
+Một `AsyncValue<T>` luôn ở một trong ba trạng thái sau:
+-   ✅ **`Data`**: Chứa dữ liệu thực tế (`T`) khi thành công.
+-   ⏳ **`Loading`**: Đang trong quá trình chờ (gọi API, tải file).
+-   ❌ **`Error`**: Chứa thông tin lỗi và StackTrace khi thất bại.
 
-### 🔹 `ref.watch(provider)`
--   **Dùng trong:** Hàm `build`.
--   **Tác dụng:** Lắng nghe và **rebuild** widget khi dữ liệu thay đổi. Đa số trường hợp bạn sẽ dùng cái này.
-
-### 🔹 `ref.read(provider)`
--   **Dùng trong:** Các hàm xử lý sự kiện (onPressed) hoặc `initState`.
--   **Tác dụng:** Lấy giá trị hiện tại của provider mà **không lắng nghe**. Tuyệt đối không dùng trong `build`.
-
-### 🔹 `ref.listen(provider, listener)`
--   **Dùng trong:** Hàm `build`.
--   **Tác dụng:** Xử lý **Side Effects** (hiện Snackbar, điều hướng) khi state thay đổi. Không gây rebuild.
-
-### 🔹 Widget `Consumer`
-Dùng để bao bọc một đoạn code nhỏ cần lắng nghe provider thay vì rebuild cả màn hình lớn (Giống `BlocBuilder`).
+### 🔹 3.2. Sức mạnh của `AsyncValue.guard()`
+Trong các hàm xử lý logic (ví dụ `login`), thay vì dùng `try-catch` thủ công, hãy dùng `guard`. Nó sẽ tự động bắt lỗi và chuyển `state` sang trạng thái `Error` nếu có ngoại lệ xảy ra.
 
 ---
 
-## 5. Các tính năng nâng cao quan trọng
+## 4. Cách sử dụng tại UI (Consuming)
 
-### 🟢 `autoDispose` (Tặc động dọn dẹp)
-Trong dự án dùng Generator, mọi provider mặc định là `autoDispose`. Khi không còn ai sử dụng (màn hình đóng), state sẽ bị hủy để tiết kiệm RAM. Nếu muốn giữ state lại (dạng Singleton), dùng `@Riverpod(keepAlive: true)`.
+### 🔹 4.1. Cách truy cập `WidgetRef`
+Để sử dụng các Provider trong UI, bạn cần có đối tượng `WidgetRef`.
 
-### 🟢 `family` (Truyền tham số)
-Dùng khi bạn muốn lấy dữ liệu dựa trên một ID nào đó.
+-   **Dạng Stateless:** Dùng `ConsumerWidget` thay vì `StatelessWidget`. Hàm `build` sẽ có thêm tham số `WidgetRef ref`.
+-   **Dạng Stateful:** Dùng `ConsumerStatefulWidget` và `ConsumerState`. `ref` có thể truy cập ở bất cứ đâu trong class (tương tự `context`).
+-   **Dạng Inline:** Dùng widget `Consumer` khi bạn chỉ muốn rebuild một phần nhỏ của UI thay vì cả màn hình lớn.
+
+### 🔹 4.2. Các câu lệnh cơ bản (`watch`, `read`, `listen`)
+
+-   ✅ **`ref.watch(provider)`**: Luôn dùng trong `build`. Giúp UI tự động rebuild mỗi khi state của provider thay đổi.
+-   ✅ **`ref.read(provider.notifier)`**: Chỉ dùng để gọi các hàm xử lý hành động (Action) trong `onPressed`, `onTap`, v.v. **Cấm** dùng trong `build`.
+-   ✅ **`ref.listen(provider, (prev, next) { ... })`**: Dùng để xử lý các hiệu ứng phụ (**Side Effects**) như hiển thị Dialog, SnackBar hoặc Điều hướng dựa trên state mà không rebuild UI.
+
+### 🔹 4.3. Xử lý UI với `AsyncValue`
+
+Đây là pattern chuẩn trong dự án để xử lý loading và lỗi:
+
 ```dart
-@riverpod
-Future<User> fetchUser(FetchUserRef ref, String userId) async {
-  return ref.read(apiClient).getUser(userId);
+@override
+Widget build(BuildContext context, WidgetRef ref) {
+  final authState = ref.watch(authNotifierProvider);
+
+  return authState.when(
+    // 1. Khi có dữ liệu thành công
+    data: (isLoggedIn) => HomeContent(isLoggedIn: isLoggedIn),
+    
+    // 2. Khi đang tải lần đầu/loading chung
+    loading: () => const Center(child: CircularProgressIndicator()),
+    
+    // 3. Khi xảy ra lỗi (Có nút bấm để thử lại nếu cần)
+    error: (err, stack) => Center(
+      child: Column(
+        children: [
+          Text('Xảy ra lỗi: $err'),
+          ElevatedButton(
+            onPressed: () => ref.invalidate(authNotifierProvider),
+            child: const Text('Thử lại'),
+          ),
+        ],
+      ),
+    ),
+  );
 }
-// Cách dùng ở UI: ref.watch(fetchUserProvider('123'));
 ```
 
-### 🟢 `select` (Tối ưu hóa rebuild)
-Chỉ rebuild widget khi một trường cụ thể trong Object thay đổi.
+### 🔹 4.4. Tối ưu hiệu năng với `.select`
+Nếu một Provider chứa Object lớn nhưng bạn chỉ quan tâm đến 1 trường dữ liệu, hãy dùng `select` để tránh rebuild không cần thiết:
 ```dart
-final name = ref.watch(userProvider.select((u) => u.name));
-```
-
----
-
-## 6. Testing & Debugging
-
-### 🔹 ProviderObserver (Theo dõi trạng thái toàn App)
-Dùng để log lại mọi thay đổi của provider trong console, cực kỳ hữu ích khi debug.
-```dart
-class MyObserver extends ProviderObserver {
-  @override
-  void didUpdateProvider(ProviderBase provider, Object? previousValue, Object? newValue, ProviderContainer container) {
-    print('Provider ${provider.name ?? provider.runtimeType} đã đổi sang $newValue');
-  }
-}
-// Cách dùng trong main.dart:
-// ProviderScope(observers: [MyObserver()], child: MyApp())
-```
-
-### 🔹 Provider Overrides (Ghi đè - Testing)
-Dự án có thể dễ dàng mock dữ liệu test bằng cách ghi đè provider trong `ProviderScope`:
-```dart
-ProviderScope(
-  overrides: [
-    apiClientProvider.overrideWithValue(MockApiClient()),
-  ],
-  child: MyApp(),
-)
+final userName = ref.watch(userProvider.select((u) => u.name));
 ```
 
 ---
 
-## 7. Các kỹ thuật tối ưu hóa & Xử lý đặc biệt
+## 5. Quy tắc quan trọng về Phụ thuộc & Deprecation
 
-### 🔹 Eager Initialization (Khởi tạo sớm)
-Dùng khi bạn muốn một provider (như Database, SharedPrefs) khởi tạo ngay khi app vừa bật mà không đợi widget nào watch.
--   **Cách làm:** Trong một provider "init", hãy `ref.watch` các provider cần khởi tạo sớm. Sau đó bạn `watch` provider "init" đó ngay tại `main.dart` hoặc root widget.
+### ✅ Luôn dùng `Ref` generic
+Để tránh các cảnh báo *Deprecated*, dùng lớp **`Ref`** cho tham số đầu tiên của mọi Provider.
 
-### 🔹 Pull-to-refresh & Invalidating State
-Lệnh `ref.invalidate(provider)` sẽ xóa bỏ cache và buộc provider đó phải chạy lại hàm `build`.
-```dart
-// Trong UI (Pull to refresh)
-onRefresh: () async {
-  ref.invalidate(productListProvider); // Reset và gọi lại build
-  await ref.read(productListProvider.future); // Đợi lấy xong dữ liệu mới
-}
-```
+### ✅ Khai báo `dependencies`
+Khi Provider A dùng `ref.watch` Provider B, bạn **phải** khai báo Provider B trong danh sách `dependencies`.
 
-### 🔹 Debouncing & Cancelling (Xử lý tìm kiếm/nhập liệu nhanh)
-Dùng khi bạn không muốn gọi API liên tục mỗi khi user gõ 1 phím.
-```dart
-@riverpod
-Future<List<User>> searchUsers(SearchUsersRef ref, String query) async {
-  // 1. Chờ 500ms
-  await Future.delayed(const Duration(milliseconds: 500));
-  
-  // 2. Kiểm tra xem user có gõ thêm gì không (nếu có, request này sẽ được dispose)
-  final cancelToken = CancelToken();
-  ref.onDispose(() => cancelToken.cancel());
-
-  return ref.read(apiClient).getUsers(query, cancelToken: cancelToken);
-}
-```
-
-### 🔹 Truy cập Provider ngoài Widget Tree (`ProviderContainer`)
-Đôi khi bạn cần đọc dữ liệu bên ngoài màn hình (ví dụ: trong một Service độc lập hoặc trong `main.dart`).
--   Hãy dùng `ProviderContainer` (nhưng hãy cẩn thận, chỉ dùng khi thực sự cần thiết).
+### ✅ `Raw<T>` cho `ChangeNotifier`
+Nếu đối tượng trả về là `ChangeNotifier`, dùng `Raw<T>` để generator không can thiệp vào vòng đời:
+`Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) { ... }`
 
 ---
-*Ghi chú: Luôn ưu tiên sử dụng code generation (`@riverpod`) thay vì khai báo tay (`final ...Provider`) để nhận được sự hỗ trợ tốt nhất từ IDE và trình biên dịch.*
+
+## 6. Lệnh sinh Code (Build Runner)
+
+Cần cài đặt `fvm` trước khi chạy:
+
+-   **Sinh code 1 lần:**
+    `fvm flutter pub run build_runner build --delete-conflicting-outputs`
+
+-   **Tự động sinh khi sửa file (Khuyên dùng khi dev):**
+    `fvm flutter pub run build_runner watch --delete-conflicting-outputs`
+
+---
+*Tài liệu này được soạn thảo để chuẩn hóa quy trình code trong dự án.*

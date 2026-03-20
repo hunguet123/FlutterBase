@@ -90,13 +90,13 @@ Khi cập nhật file i18n (`lib/l10n/*.i18n.json`), hoặc thêm Provider mới
 
 ```bash
 # Sinh code cho i18n (Slang)
-dart run slang
+fvm flutter pub run slang
 
 # Sinh code cho Riverpod
-dart run build_runner build --delete-conflicting-outputs
+fvm flutter pub run build_runner build --delete-conflicting-outputs
 
 # Tự động sinh code khi file thay đổi
-dart run build_runner watch --delete-conflicting-outputs
+fvm flutter pub run build_runner watch --delete-conflicting-outputs
 ```
 
 ### 3. Firebase Configuration
@@ -122,39 +122,29 @@ Dự án sẽ tự động khởi tạo Firebase bằng lệnh `await Firebase.i
 
 ## Cách chạy (Run)
 
-### Chạy với flavor development
-
 ```bash
-# Android
-flutter run --flavor development
+# Chạy với flavor development
+fvm flutter run --flavor development
 
-# iOS (chọn scheme development trong Xcode hoặc)
-flutter run --flavor development
-```
+# Chạy với flavor production
+fvm flutter run --flavor production
 
-### Chạy với flavor production
-
-```bash
-flutter run --flavor production
-```
-
-### Chỉ định thiết bị
-
-```bash
-flutter run --flavor development -d <device_id>
+# Chỉ định thiết bị cụ thể
+fvm flutter run --flavor development -d <device_id>
 ```
 
 ### Build APK/IPA
 
 ```bash
+```bash
 # Android APK (development)
-flutter build apk --flavor development
+fvm flutter build apk --flavor development
 
 # Android APK (production)
-flutter build apk --flavor production
+fvm flutter build apk --flavor production
 
 # iOS (cần chọn scheme tương ứng trong Xcode)
-flutter build ios --flavor production
+fvm flutter build ios --flavor production
 ```
 
 **Credentials mẫu cho login**: `username: hunghq`, `password: 12345` (cần mock API trả 200 + token).

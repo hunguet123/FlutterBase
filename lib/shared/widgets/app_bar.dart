@@ -9,12 +9,14 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.leading,
     this.centerTitle = true,
+    this.automaticallyImplyLeading = true,
   });
 
   final String title;
   final List<Widget>? actions;
   final Widget? leading;
   final bool centerTitle;
+  final bool automaticallyImplyLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       leading: leading,
       centerTitle: centerTitle,
+      automaticallyImplyLeading: automaticallyImplyLeading,
     );
   }
 

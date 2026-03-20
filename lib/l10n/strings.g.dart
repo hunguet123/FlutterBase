@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 11
+/// Strings: 12
 ///
-/// Built on 2026-03-19 at 07:10 UTC
+/// Built on 2026-03-20 at 02:48 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -176,6 +176,7 @@ class _StringsLoginVi {
 	String get hintUsername => 'Nhập tên đăng nhập';
 	String get hintPassword => 'Nhập mật khẩu';
 	String get errorLogin => 'Đăng nhập thất bại';
+	String get maintenanceError => 'Hệ thống đang bảo trì. Vui lòng thử lại sau.';
 }
 
 // Path: home
@@ -204,6 +205,7 @@ extension on Translations {
 			case 'login.hintUsername': return 'Nhập tên đăng nhập';
 			case 'login.hintPassword': return 'Nhập mật khẩu';
 			case 'login.errorLogin': return 'Đăng nhập thất bại';
+			case 'login.maintenanceError': return 'Hệ thống đang bảo trì. Vui lòng thử lại sau.';
 			case 'home.title': return 'Trang chủ';
 			case 'home.welcome': return 'Chào mừng!';
 			case 'home.logout': return 'Đăng xuất';

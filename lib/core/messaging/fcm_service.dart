@@ -2,10 +2,14 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'fcm_service.g.dart';
 
 /// Provider for Firebase Messaging instance.
-final firebaseMessagingProvider =
-    Provider<FirebaseMessaging>((ref) => FirebaseMessaging.instance);
+@Riverpod(keepAlive: true, dependencies: [])
+FirebaseMessaging firebaseMessaging(Ref ref) =>
+    FirebaseMessaging.instance;
 
 /// FCM service for managing push notifications.
 /// Handles permission request, foreground/background messages, token, and tap handling.
@@ -24,6 +28,8 @@ class FcmService {
       carPlay: false,
       criticalAlert: false,
       provisional: false,
+      // ignore: deprecated_member_use
+      // clickAction: '', // Not used in modern FCM libs but some old code might have it
     );
   }
 
@@ -53,23 +59,20 @@ class FcmService {
 
     onTokenRefresh.listen((token) {
       log('FCM Token Refreshed: $token');
-      // TODO: Send new token to backend session
     });
 
     onMessage.listen((msg) {
-      // Foreground message – log or show in-app notification
       log('FCM foreground: ${msg.notification?.title}');
     });
 
     onMessageOpenedApp.listen((msg) {
-      // User tapped notification – handle deep link / navigate
       log('FCM opened: ${msg.data}');
     });
   }
 }
 
-
-final fcmServiceProvider = Provider<FcmService>((ref) {
+@Riverpod(keepAlive: true, dependencies: [firebaseMessaging])
+FcmService fcmService(Ref ref) {
   final messaging = ref.watch(firebaseMessagingProvider);
   return FcmService(messaging);
-});
+}
