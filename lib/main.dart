@@ -18,8 +18,6 @@ import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
   // Initialize services and get the container
   final container = await initServices();
 
@@ -35,6 +33,7 @@ void main() async {
 /// Initializes all core services (Firebase, Env, Auth, FCM, etc.) 
 /// and returns the configured ProviderContainer.
 Future<ProviderContainer> initServices() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // 1. Load env via flutter_dotenv based on flavor
   const flavor = String.fromEnvironment('FLUTTER_APP_FLAVOR', defaultValue: 'development');
   await dotenv.load(fileName: flavor == 'production' ? '.env.prod' : '.env.dev');

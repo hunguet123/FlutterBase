@@ -49,3 +49,7 @@ app.*.map.json
 .env.dev
 .env.prod
 env.g.dart
+
+# Firebase config files
+**/google-services.json
+**/GoogleService-Info*.plist
