@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
+import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
-import 'package:flutter_base/shared/widgets/app_bar.dart';
-import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/features/auth/presentation/providers/login_notifier.dart';
 
 /// Login screen. On successful API login navigates to Home.
@@ -29,50 +29,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _onSubmit() async {
-    final loginState = ref.read(loginNotifierProvider);
-    final isLoading = loginState.isLoading;
-    if (_formKey.currentState?.validate() != true || isLoading) return;
+    if (_formKey.currentState?.validate() != true) return;
+    await ref.read(loginNotifierProvider.notifier).login(
+      _usernameController.text.trim(),
+      _passwordController.text,
+    );
+  }
 
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text;
-
-    try {
-      await ref.read(loginNotifierProvider.notifier).login(username, password);
-    } on ValidationException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
-    } on MaintenanceException {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(Translations.of(context).login.maintenanceError),
-        ),
-      );
-    } on NetworkException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${Translations.of(context).login.errorLogin}: ${e.message}'),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
+  String _errorMessage(Object error, Translations t) {
+    return switch (error) {
+      ValidationException e => e.message,
+      MaintenanceException() => t.login.maintenanceError,
+      NetworkException e => '${t.login.errorLogin}: ${e.message}',
+      _ => error.toString(),
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginState = ref.watch(loginNotifierProvider);
-    final isLoading = loginState.isLoading;
-    final translations = Translations.of(context);
+    final t = Translations.of(context);
+    final isLoading = ref.watch(loginNotifierProvider).isLoading;
+
+    ref.listen(loginNotifierProvider, (previous, next) {
+      final error = next.error;
+      if (error == null || error == previous?.error) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMessage(error, t))),
+      );
+    });
 
     return Scaffold(
-      appBar: AppAppBar(title: translations.login.title),
+      appBar: AppAppBar(title: t.login.title),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -83,35 +70,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 AppTextField(
                   controller: _usernameController,
-                  labelText: translations.login.username,
-                  hintText: translations.login.hintUsername,
+                  labelText: t.login.username,
+                  hintText: t.login.hintUsername,
                   textInputAction: TextInputAction.next,
                   enabled: !isLoading,
-                  validator:
-                      (v) =>
-                          (v == null || v.isEmpty)
-                              ? translations.login.hintUsername
-                              : null,
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? t.login.hintUsername : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
                   controller: _passwordController,
-                  labelText: translations.login.password,
-                  hintText: translations.login.hintPassword,
+                  labelText: t.login.password,
+                  hintText: t.login.hintPassword,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                   enabled: !isLoading,
                   onFieldSubmitted: (_) => _onSubmit(),
-                  validator:
-                      (v) =>
-                          (v == null || v.isEmpty)
-                              ? translations.login.hintPassword
-                              : null,
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? t.login.hintPassword : null,
                 ),
                 const SizedBox(height: 24),
                 AppButton(
                   onPressed: _onSubmit,
-                  text: translations.login.submit,
+                  text: t.login.submit,
                   isLoading: isLoading,
                 ),
               ],

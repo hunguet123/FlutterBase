@@ -13,15 +13,14 @@ class LoginNotifier extends _$LoginNotifier {
   LoginState build() => LoginState.initial();
 
   Future<void> login(String username, String password) async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       await ref.read(loginUseCaseProvider).call(username, password);
       ref.read(analyticsProvider).logEvent(name: AnalyticsEvents.login);
       state = state.copyWith(isLoading: false);
       ref.invalidate(authSessionNotifierProvider);
     } catch (e) {
-      state = state.copyWith(isLoading: false);
-      rethrow;
+      state = state.copyWith(isLoading: false, error: e);
     }
   }
 }
