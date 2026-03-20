@@ -6,7 +6,7 @@ Chào mừng bạn đến với dự án **Flutter Base**! Đây là tài liệu
 
 Dự án được xây dựng dựa trên các thư viện phổ biến và mạnh mẽ nhất trong hệ sinh thái Flutter:
 
-*   **State Management:** [Riverpod](https://riverpod.dev/). Dự án sử dụng Code Generation và tuân thủ chuẩn Riverpod 3.0 (sử dụng kiểu `Ref` và `dependencies` rõ ràng). 
+*   **State Management:** [Riverpod](https://riverpod.dev/). Dự án sử dụng Code Generation và tuân thủ chuẩn Riverpod 3.0 (sử dụng kiểu `Ref` và `dependencies` rõ ràng).
 *   **Routing:** [GoRouter](https://pub.dev/packages/go_router). Quản lý chuyển trang và xử lý điều hướng thông minh.
 *   **Networking:** [Dio](https://pub.dev/packages/dio). Thư viện HTTP client mạnh mẽ để gọi API.
 *   **Localization (Đa ngôn ngữ):** [Slang](https://pub.dev/packages/slang). Giúp quản lý chuỗi ký tự theo kiểu type-safe, giảm thiểu sai sót.
@@ -23,20 +23,58 @@ Dự án được xây dựng dựa trên các thư viện phổ biến và mạ
 
 ## 2. Cấu trúc thư mục (Project Structure)
 
-Code được tổ chức theo cấu trúc phân lớp (Layered Architecture) trong thư mục `lib/`:
+Code được tổ chức theo Clean Architecture trong thư mục `lib/`:
 
-*   `core/`: Chứa các thành phần hạ tầng dùng chung cho toàn bộ app:
-    *   `config/`: Cấu hình môi trường (.env), Firebase (native configs), Remote Config.
-    *   `network/`: Cài đặt Dio, Interceptors (xử lý token, log API, bắt lỗi).
-    *   `storage/`: Định nghĩa cách lưu trữ dữ liệu local.
-    *   `messaging/`: Xử lý thông báo (FCM).
-*   `features/`: Chứa mã nguồn theo từng tính năng (Domain-driven):
-    *   `auth/`: Xử lý Đăng nhập, Đăng xuất, quản lý Session.
-    *   `home/`: Giao diện chính sau khi đăng nhập.
-    *   Mỗi feature thường chia nhỏ thành: `domain` (contract/entity), `data` (gọi API/DB + implementation), `presentation` (UI/Screen), `providers` (Logic nghiệp vụ).
-*   `shared/`: Chứa các Component UI dùng chung (Button, TextField, Dialog...).
-*   `routing/`: Định nghĩa các route (đường dẫn) và logic điều hướng của app.
-*   `l10n/`: Chứa các file ngôn ngữ (.i18n.json).
+```
+lib/
+├── app/
+│   └── providers/              # App-level state dùng chung toàn app
+│       ├── auth_session_state.dart
+│       ├── auth_session_notifier.dart   # Quản lý trạng thái đăng nhập/đăng xuất
+│       ├── app_auth_provider.dart       # isLoggedIn cho router
+│       └── app_maintenance_provider.dart # isMaintenance cho router
+├── core/                       # Hạ tầng dùng chung, không phụ thuộc features/
+│   ├── analytics/data/         # Firebase Analytics provider + event constants
+│   ├── config/                 # Remote Config, AppConfig model, env vars
+│   │   ├── domain/models/      # AppConfig (domain model)
+│   │   └── data/               # remoteConfigProvider, appConfigProvider
+│   ├── constants/              # AppColors, AppDimens
+│   ├── exceptions/             # AppException, MaintenanceException, AuthException
+│   ├── messaging/              # FCM service
+│   │   ├── domain/models/      # FcmMessage, FcmToken
+│   │   └── data/               # FcmService + provider
+│   ├── network/                # Dio setup, interceptors
+│   │   ├── auth_token_provider.dart  # Slot provider (DI boundary)
+│   │   └── data/               # apiClientProvider
+│   ├── storage/                # SecureStorage, PreferencesStorage
+│   │   ├── domain/             # Interfaces
+│   │   └── data/               # Implementations + providers
+│   └── theme/                  # AppTheme (light/dark)
+├── features/                   # Code theo từng tính năng
+│   ├── auth/
+│   │   ├── domain/
+│   │   │   ├── interfaces/     # AuthTokenProvider (contract cho network layer)
+│   │   │   ├── models/         # AuthTokens
+│   │   │   └── repositories/   # AuthRepository (interface)
+│   │   ├── data/
+│   │   │   ├── auth_session_store.dart      # Token storage + provider
+│   │   │   ├── auth_repository_provider.dart
+│   │   │   └── repositories/
+│   │   │       └── auth_repository_impl.dart
+│   │   └── presentation/
+│   │       ├── providers/      # LoginState, LoginNotifier (UI state của login screen)
+│   │       └── screens/        # LoginScreen
+│   └── home/
+│       └── presentation/screens/  # HomeScreen, MaintenanceScreen
+├── routing/
+│   ├── app_routes.dart              # Path constants
+│   ├── analytics_route_observer.dart # NavigatorObserver cho Analytics
+│   ├── router_refresh_notifier.dart  # Bridge Riverpod → GoRouter + provider
+│   └── app_router.dart              # createAppRouter + routerProvider
+├── shared/
+│   └── widgets/                # AppButton, AppTextField, AppAppBar
+└── l10n/                       # File ngôn ngữ (.i18n.json)
+```
 
 ---
 
@@ -48,30 +86,36 @@ App sử dụng flavor để tách biệt môi trường **Development** và **P
 *   Truy cập an toàn thông qua class `Env` tại `lib/core/config/env.dart`.
 
 ### 3.2. Luồng Authentication (Đăng nhập)
-1.  Khi app khởi động (`main.dart`), app sẽ load token từ bộ nhớ an toàn (`AuthSessionStore`).
-2.  `AuthNotifier` (Riverpod) sẽ kiểm tra xem đã có session chưa.
-3.  `App` widget (`app.dart`) lắng nghe trạng thái của `AuthNotifier`:
-    *   Nếu chưa đăng nhập: Hiển thị trang `LoginScreen`.
-    *   Nếu đã đăng nhập: Khởi tạo `GoRouter` và đưa người dùng vào `HomeScreen`.
-4.  Khi gọi API, `AuthInterceptor` sẽ tự động thêm `Authorization: Bearer <token>` vào header.
+1.  Khi app khởi động (`main.dart`), token được load từ `SecureStorage` vào `AuthSessionStore`.
+2.  `AuthSessionNotifier` (tại `app/providers/`) kiểm tra session qua `AuthRepository`.
+3.  `App` widget (`app.dart`) watch `authSessionNotifierProvider`:
+    *   Nếu đang load: Hiển thị `CircularProgressIndicator`.
+    *   Nếu đã load: GoRouter tự redirect dựa trên `appIsLoggedInProvider`.
+4.  `LoginScreen` dùng `LoginNotifier` để quản lý UI state (isLoading) và gọi login.
+5.  Sau khi login thành công, `LoginNotifier` invalidate `authSessionNotifierProvider` → router tự redirect sang `HomeScreen`.
+6.  Khi gọi API, `AuthInterceptor` tự động thêm `Authorization: Bearer <token>` vào header.
 
-### 3.3. Xử lý API & Lỗi
-*   Tất cả các lỗi API đều được `ErrorInterceptor` ghi lại vào **Firebase Crashlytics** để giúp team dev dễ dàng fix bug.
-*   Log API được in ra console một cách đẹp mắt trong quá trình debug nhờ `ApiLogInterceptor`.
+### 3.3. Luồng Maintenance Mode
+`RouterRefreshNotifier` watch cả `appIsLoggedInProvider` lẫn `appIsMaintenanceProvider`. Khi Remote Config push `maintenance_mode = true`, router tự redirect toàn bộ user sang `/maintenance` mà không cần restart app.
+
+### 3.4. Xử lý API & Lỗi
+*   Tất cả lỗi API đều được `ErrorInterceptor` ghi vào **Firebase Crashlytics**.
+*   Log API được in ra console trong quá trình debug nhờ `ApiLogInterceptor`.
 
 ---
 
 ## 4. Lưu ý dành cho bạn
 
-1.  **Code Generation:** Dự án sử dụng `build_runner`. Sau khi thêm Provider mới hoặc file ngôn ngữ, bạn cần chạy lệnh:
+1.  **Code Generation:** Sau khi thêm Provider mới hoặc file ngôn ngữ, chạy:
     ```bash
-    fvm flutter pub run build_runner build --delete-conflicting-outputs
+    fvm dart run build_runner build --delete-conflicting-outputs
     ```
-2.  **Đa ngôn ngữ:** Khi thêm chuỗi ký tự mới, hãy thêm vào file trong `lib/l10n/` và sử dụng thông qua object `t` (ví dụ: `t.auth.login_button`).
-3.  **UI Components:** Trước khi tạo một Widget mới, hãy kiểm tra thư mục `lib/shared/widgets/` xem đã có component tương tự chưa để tái sử dụng.
+2.  **Đa ngôn ngữ:** Khi thêm chuỗi ký tự mới, hãy thêm vào file trong `lib/l10n/` và sử dụng thông qua object `t` (ví dụ: `t.login.title`).
+3.  **UI Components:** Trước khi tạo Widget mới, kiểm tra `lib/shared/widgets/` xem đã có component tương tự chưa.
 4.  **Tuyệt đối tuân thủ:**
-    *   Không viết cứng (hardcode) các chuỗi ký tự hoặc địa chỉ API.
-    *   Sử dụng Riverpod để quản lý logic, tránh viết quá nhiều code nghiệp vụ trong hàm `build` của Widget.
+    *   Không hardcode chuỗi ký tự hoặc địa chỉ API.
+    *   `core/` không được import `features/` — đây là quy tắc kiến trúc quan trọng nhất.
+    *   Dùng Riverpod để quản lý logic, tránh viết business logic trong hàm `build`.
 
 ---
 Chúc bạn có trải nghiệm làm việc tuyệt vời với dự án Flutter Base!

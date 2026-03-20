@@ -1,59 +1,63 @@
-# 🏗️ Hướng dẫn Tầng Dữ liệu (Data Layer Guide)
+# Hướng dẫn Tầng Dữ liệu (Data Layer Guide)
 
 Tài liệu này giải thích cách tổ chức và vận hành của tầng dữ liệu trong dự án Flutter Base.
 
 ---
 
 ## 1. Cấu trúc thư mục
-Mỗi tính năng (`feature`) sẽ có các thư mục `domain/` (contract/entity) và `data/` (implementation + wiring) để quản lý dữ liệu cục bộ:
+
+Mỗi feature tuân theo Clean Architecture với 3 tầng rõ ràng:
+
 ```
 lib/features/auth/
 ├── domain/
+│   ├── interfaces/
+│   │   └── auth_token_provider.dart   # Contract cho network layer (DI boundary)
+│   ├── models/
+│   │   └── auth_tokens.dart           # Domain model (AccessToken, RefreshToken)
 │   └── repositories/
-│       └── auth_repository.dart   # Contract (interface) của AuthRepository
+│       └── auth_repository.dart       # Contract (interface) của AuthRepository
 └── data/
-    ├── auth_repository.dart        # Barrel export (không chứa trực tiếp implementation)
-    ├── auth_repository_provider.dart # Provider (Riverpod wiring) trả về AuthRepository
-    ├── repositories/
-    │   └── auth_repository_impl.dart # Implementation cụ thể (Dio)
-    └── auth_session_store.dart     # Quản lý Session (Token)
+    ├── auth_session_store.dart        # Token storage (class + provider cùng file)
+    ├── auth_repository_provider.dart  # Riverpod wiring → trả về AuthRepository
+    └── repositories/
+        └── auth_repository_impl.dart  # Implementation cụ thể (Dio)
 ```
+
+**Quy tắc phụ thuộc:**
+- `domain/` không import bất kỳ thứ gì ngoài Dart core.
+- `data/` được phép import `domain/` và thư viện hạ tầng (Dio, Firebase...).
+- `presentation/` chỉ import `domain/` và `data/` của cùng feature, hoặc `app/providers/`.
 
 ---
 
-## 2. Repository Pattern (Mẫu thiết kế Kho dữ liệu)
+## 2. Repository Pattern
 
-Dự án sử dụng Repository để tách biệt logic gọi API/DB với logic nghiệp vụ (Business Logic).
-
-### 🔹 Interface & Implementation
-Chúng ta tách biệt thành `interface` (định nghĩa) và `class Implementation` (thực thi) để dễ dàng thay thế hoặc Mock khi viết Test.
+Dự án tách biệt `interface` (domain contract) và `implementation` (data class) để dễ mock khi test.
 
 ```dart
-// Định nghĩa (Interface)
+// domain/repositories/auth_repository.dart
 abstract interface class AuthRepository {
-  Future<void> login(String user, String pass);
+  Future<void> login(String username, String password);
+  Future<void> logout();
+  Future<bool> hasSession();
 }
 
-// Thực thi (Implementation)
+// data/repositories/auth_repository_impl.dart
 class AuthRepositoryImpl implements AuthRepository {
-  @override
-  Future<void> login(...) { ... }
+  AuthRepositoryImpl(this._dio, this._sessionStore);
+  // ...
 }
 ```
 
 ---
 
-## 3. Tại sao Data Layer có Provider?
+## 3. Provider Wiring
 
-Để giữ cho code "neat & clean" (gọn gàng), chúng ta đặt **provider wiring** (khai báo `@Riverpod`) trong `data/` để composition/dependency injection diễn ra đúng tầng. Dự án tuân thủ Riverpod 3.0 (phải khai báo `dependencies` rõ ràng).
-
-**Mục đích:**
-1.  **Dependency Injection (DI)**: Tự động cung cấp `Dio`, `SecureStorage` hoặc các `Store` khác vào Repository.
-2.  **Testability**: Dễ dàng override các Provider này bằng mock/fake trong môi trường test mà không cần can thiệp vào code main.
-3.  **Instance Management**: Riverpod quản lý vòng đời (Lifecycle) của instance, đảm bảo dùng chung instance (Singleton) thông qua `keepAlive: true`.
+Provider nằm trong `data/` để composition/dependency injection diễn ra đúng tầng. Dự án tuân thủ Riverpod 3.0 — phải khai báo `dependencies` rõ ràng.
 
 ```dart
-// Ví dụ khai báo chuẩn tại lib/features/auth/data/auth_repository_provider.dart
+// lib/features/auth/data/auth_repository_provider.dart
 @Riverpod(dependencies: [apiClient, authSessionStore])
 AuthRepository authRepository(Ref ref) {
   final dio = ref.watch(apiClientProvider);
@@ -62,34 +66,63 @@ AuthRepository authRepository(Ref ref) {
 }
 ```
 
+**Khi nào tách provider ra file riêng?**
+- Nếu class nhỏ và provider chỉ wrap class đó: đặt cùng file (ví dụ `auth_session_store.dart`).
+- Nếu provider cần import nhiều dependency từ nhiều nơi: tách ra file riêng (ví dụ `auth_repository_provider.dart`).
+
 ---
 
 ## 4. Quản lý lưu trữ (Stores)
 
-Dự án sử dụng Dependency Injection cho toàn bộ hệ thống lưu trữ:
-
 | Loại lưu trữ | Công nghệ | Provider | Mục đích |
 | :--- | :--- | :--- | :--- |
-| **Secure Store** | `flutter_secure_storage` | `secureStorageProvider` | Lưu Token, API Key (Dữ liệu nhạy cảm). |
-| **Prefs Store** | `shared_preferences` | `preferencesStorageProvider` | Lưu Theme mode, Ngôn ngữ, cài đặt UI. |
+| **Secure Store** | `flutter_secure_storage` | `secureStorageProvider` | Lưu Token, API Key (dữ liệu nhạy cảm). |
+| **Prefs Store** | `shared_preferences` | `preferencesStorageProvider` | Lưu theme, ngôn ngữ, cài đặt UI. |
 
-**Note về cấu trúc:** Contract nằm ở `lib/core/storage/domain/`, còn implementation + provider nằm ở `lib/core/storage/data/`. Hai file barrel `lib/core/storage/secure_storage.dart` và `lib/core/storage/preferences_storage.dart` chỉ `export` để thống nhất import.
+**Cấu trúc `core/storage/`:**
+- Contract (interface) nằm ở `domain/`.
+- Implementation + provider nằm ở `data/`.
+- Hai file barrel `secure_storage.dart` và `preferences_storage.dart` ở root chỉ re-export để thống nhất import.
 
-**Luồng hoạt động:**
-1.  `secureStorageProvider` khởi tạo instance Native storage.
-2.  `authSessionStoreProvider` nhận `SecureStorage` instance và quản lý logic Token.
-3.  `AuthRepository` nhận `AuthSessionStore` để thực hiện ghi Token sau khi Login thành công.
+**Luồng token:**
+1. `secureStorageProvider` khởi tạo native storage.
+2. `authSessionStoreProvider` nhận `SecureStorage` và quản lý logic token (read/write/clear).
+3. `AuthRepositoryImpl` nhận `AuthSessionStore` để ghi token sau khi login thành công.
+4. `AuthInterceptor` nhận `AuthTokenProvider` (interface) để đọc token đồng bộ — không phụ thuộc vào `AuthSessionStore` trực tiếp.
 
-*Lưu ý: Tuyệt đối không dùng Singleton pattern kiểu `AuthSessionStore.instance`. Hãy dùng Riverpod để inject dependency.*
+---
+
+## 5. Dependency Inversion: core/network ↔ features/auth
+
+`core/network` không được phép import `features/`. Để `AuthInterceptor` đọc được token, dự án dùng pattern **slot provider**:
+
+```dart
+// core/network/auth_token_provider.dart
+// Slot — phải được override tại composition root (main.dart)
+final authTokenProviderRef = Provider<AuthTokenProvider>(
+  (ref) => throw UnimplementedError('Must be overridden'),
+);
+
+// main.dart — override slot với implementation thực tế
+final container = ProviderContainer(
+  overrides: [
+    authTokenProviderRef.overrideWith(
+      (ref) => ref.watch(authSessionStoreProvider),
+    ),
+  ],
+);
+```
+
+`AuthSessionStore` implement `AuthTokenProvider` (domain interface), nên có thể được inject vào `core/network` mà không tạo ra circular dependency.
 
 ---
 
-## 5. Quy tắc vàng khi làm việc với Data Layer
+## 6. Quy tắc vàng
 
-1.  **Không gọi UI trực tiếp**: Tuyệt đối không import bất kỳ widget nào vào tầng Data.
-2.  **Xử lý Exception**: Các lỗi API nên được ném (throw) dưới dạng `AppException` để tầng Logic xử lý và hiển thị thông báo.
-3.  **Generator**: Sau khi sửa bất kỳ file nào có `@Riverpod`, hãy chạy lệnh `fvm flutter pub run build_runner build`.
-4.  **Dependencies**: Khi thêm một Provider mới phụ thuộc vào các Provider khác, bạn PHẢI khai báo chúng trong danh sách `dependencies` của annotation `@Riverpod`.
+1. **Không gọi UI từ Data**: Tuyệt đối không import widget vào tầng `data/` hoặc `domain/`.
+2. **Throw domain exceptions**: Lỗi từ API nên được ném dưới dạng `AppException` để tầng presentation xử lý.
+3. **Chạy build_runner**: Sau khi sửa file có `@Riverpod`, chạy `fvm dart run build_runner build --delete-conflicting-outputs`.
+4. **Khai báo dependencies**: Khi Provider A dùng Provider B, phải khai báo B trong `dependencies: [...]`.
 
 ---
-*Tầng Data là nền móng của ứng dụng, hãy giữ nó luôn sạch sẽ và quản lý dependency thông qua Riverpod.*
+*Tầng Data là nền móng của ứng dụng — giữ nó sạch và quản lý dependency qua Riverpod.*
