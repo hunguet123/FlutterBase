@@ -4,12 +4,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 
 import 'package:flutter_base/app.dart';
+import 'package:flutter_base/main.dart';
 
 void main() {
   patrolTest(
     'full login flow: invalid credentials, valid credentials, and logout',
     ($) async {
-      await $.pumpWidgetAndSettle(const ProviderScope(child: App()));
+      // 1. Khởi tạo toàn bộ services (Firebase, Env, etc.) dành cho môi trường test
+      final container = await initServices();
+
+      await $.pumpWidgetAndSettle(
+        UncontrolledProviderScope(
+          container: container,
+          child: const App(),
+        ),
+      );
 
       final usernameField = $(TextField).at(0);
       final passwordField = $(TextField).at(1);

@@ -21,7 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize services and get the container
-  final container = await _initServices();
+  final container = await initServices();
 
   // 6. Run app with UncontrolledProviderScope to reuse the same container
   runApp(
@@ -34,7 +34,7 @@ void main() async {
 
 /// Initializes all core services (Firebase, Env, Auth, FCM, etc.) 
 /// and returns the configured ProviderContainer.
-Future<ProviderContainer> _initServices() async {
+Future<ProviderContainer> initServices() async {
   // 1. Load env via flutter_dotenv based on flavor
   const flavor = String.fromEnvironment('FLUTTER_APP_FLAVOR', defaultValue: 'development');
   await dotenv.load(fileName: flavor == 'production' ? '.env.prod' : '.env.dev');
