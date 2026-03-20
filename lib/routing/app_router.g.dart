@@ -7,7 +7,7 @@ part of 'app_router.dart';
 // **************************************************************************
 
 String _$authRefreshNotifierHash() =>
-    r'9b0d84f0bf19b2f90215316833b7df08f0096acf';
+    r'a478391833b42d86ac44fa7a97e35f7dc462b72f';
 
 /// Provider for GoRouterRefreshNotifier.
 ///

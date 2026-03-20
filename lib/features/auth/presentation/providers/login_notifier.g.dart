@@ -1,40 +1,31 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_provider.dart';
+part of 'login_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authNotifierHash() => r'dd60713fb76986706cc3362684be7cb0781b7eee';
+String _$loginNotifierHash() => r'6f93b6072fd03488b190e049cd25b4c23751ae26';
 
-/// See also [AuthNotifier].
-@ProviderFor(AuthNotifier)
-final authNotifierProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthState>.internal(
-      AuthNotifier.new,
-      name: r'authNotifierProvider',
+/// See also [LoginNotifier].
+@ProviderFor(LoginNotifier)
+final loginNotifierProvider =
+    NotifierProvider<LoginNotifier, LoginState>.internal(
+      LoginNotifier.new,
+      name: r'loginNotifierProvider',
       debugGetCreateSourceHash:
           const bool.fromEnvironment('dart.vm.product')
               ? null
-              : _$authNotifierHash,
-      dependencies: <ProviderOrFamily>{
+              : _$loginNotifierHash,
+      dependencies: <ProviderOrFamily>[
         authRepositoryProvider,
-        apiClientProvider,
-        authSessionStoreProvider,
-        secureStorageProvider,
         appConfigProvider,
         analyticsProvider,
-      },
+      ],
       allTransitiveDependencies: <ProviderOrFamily>{
         authRepositoryProvider,
         ...?authRepositoryProvider.allTransitiveDependencies,
-        apiClientProvider,
-        ...?apiClientProvider.allTransitiveDependencies,
-        authSessionStoreProvider,
-        ...?authSessionStoreProvider.allTransitiveDependencies,
-        secureStorageProvider,
-        ...?secureStorageProvider.allTransitiveDependencies,
         appConfigProvider,
         ...?appConfigProvider.allTransitiveDependencies,
         analyticsProvider,
@@ -42,6 +33,6 @@ final authNotifierProvider =
       },
     );
 
-typedef _$AuthNotifier = AsyncNotifier<AuthState>;
+typedef _$LoginNotifier = Notifier<LoginState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -7,7 +7,7 @@ import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
-import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
+import 'package:flutter_base/features/auth/presentation/providers/login_notifier.dart';
 
 /// Login screen. On successful API login navigates to Home.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -30,16 +30,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _onSubmit() async {
-    final authAsync = ref.read(authNotifierProvider);
-    final isLoading =
-        authAsync.isLoading || (authAsync.asData?.value.isLoading ?? false);
+    final loginState = ref.read(loginNotifierProvider);
+    final isLoading = loginState.isLoading;
     if (_formKey.currentState?.validate() != true || isLoading) return;
 
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
 
     try {
-      await ref.read(authNotifierProvider.notifier).login(username, password);
+      await ref.read(loginNotifierProvider.notifier).login(username, password);
     } on MaintenanceException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -66,9 +65,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authAsync = ref.watch(authNotifierProvider);
-    final isLoading =
-        authAsync.isLoading || (authAsync.asData?.value.isLoading ?? false);
+    final loginState = ref.watch(loginNotifierProvider);
+    final isLoading = loginState.isLoading;
     final translations = Translations.of(context);
 
     return Scaffold(

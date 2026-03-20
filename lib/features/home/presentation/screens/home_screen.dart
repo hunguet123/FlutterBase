@@ -6,7 +6,7 @@ import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
-import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
+import 'package:flutter_base/app/providers/auth_session_notifier.dart';
 
 /// Home screen shown after successful login.
 class HomeScreen extends ConsumerWidget {
@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
             key: const Key('logoutIcon'),
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await ref.read(authNotifierProvider.notifier).logout();
+              await ref.read(authSessionNotifierProvider.notifier).logout();
               if (!context.mounted) return;
               context.go(AppRoutes.login);
             },
@@ -45,7 +45,7 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 32),
               AppButton(
                 onPressed: () async {
-                  await ref.read(authNotifierProvider.notifier).logout();
+                  await ref.read(authSessionNotifierProvider.notifier).logout();
                   if (!context.mounted) return;
                   context.go(AppRoutes.login);
                 },

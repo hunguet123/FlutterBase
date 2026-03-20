@@ -6,9 +6,8 @@ import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/analytics_provider.dart';
 import 'package:flutter_base/core/config/data/app_config_provider.dart';
 import 'package:flutter_base/core/config/domain/models/app_config.dart';
+import 'package:flutter_base/app/providers/app_auth_provider.dart';
 import 'package:flutter_base/features/auth/presentation/screens/login_screen.dart';
-import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
-import 'package:flutter_base/features/auth/presentation/providers/auth_state.dart';
 import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/features/home/presentation/screens/maintenance_screen.dart';
@@ -105,14 +104,10 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
 /// Provider for GoRouterRefreshNotifier.
 @Riverpod(keepAlive: true)
 Raw<GoRouterRefreshNotifier> authRefreshNotifier(Ref ref) {
-  final authAsync = ref.read(authNotifierProvider);
-  final isLoggedIn = authAsync.asData?.value.isLoggedIn ?? false;
+  final isLoggedIn = ref.read(appIsLoggedInProvider);
   final notifier = GoRouterRefreshNotifier(isLoggedIn);
 
-  ref.listen<AsyncValue<AuthState>>(
-    authNotifierProvider,
-    (_, next) => notifier.update(next.asData?.value.isLoggedIn ?? false),
-  );
+  ref.listen<bool>(appIsLoggedInProvider, (_, next) => notifier.update(next));
 
   ref.onDispose(notifier.dispose);
 
