@@ -33,7 +33,7 @@ Code được tổ chức theo cấu trúc phân lớp (Layered Architecture) tr
 *   `features/`: Chứa mã nguồn theo từng tính năng (Domain-driven):
     *   `auth/`: Xử lý Đăng nhập, Đăng xuất, quản lý Session.
     *   `home/`: Giao diện chính sau khi đăng nhập.
-    *   Mỗi feature thường chia nhỏ thành: `data` (gọi API/DB), `presentation` (UI/Screen), `providers` (Logic nghiệp vụ).
+    *   Mỗi feature thường chia nhỏ thành: `domain` (contract/entity), `data` (gọi API/DB + implementation), `presentation` (UI/Screen), `providers` (Logic nghiệp vụ).
 *   `shared/`: Chứa các Component UI dùng chung (Button, TextField, Dialog...).
 *   `routing/`: Định nghĩa các route (đường dẫn) và logic điều hướng của app.
 *   `l10n/`: Chứa các file ngôn ngữ (.i18n.json).

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'remote_config_provider.dart';
+part of 'remote_config_client_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
