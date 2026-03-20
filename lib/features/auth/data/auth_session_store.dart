@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:flutter_base/core/storage/secure_storage.dart';
 import 'package:flutter_base/features/auth/domain/models/auth_tokens.dart';
+import 'package:flutter_base/features/auth/domain/services/auth_token_provider.dart';
 
 part 'auth_session_store.g.dart';
 
@@ -11,7 +12,7 @@ const _refreshTokenKey = 'refresh_token';
 
 /// Manages auth tokens in SecureStorage with in-memory cache for sync access.
 /// Used by [AuthInterceptor] (sync) and [AuthRepository].
-final class AuthSessionStore {
+final class AuthSessionStore implements AuthTokenProvider {
   AuthSessionStore(this._secureStorage);
 
   final SecureStorage _secureStorage;
@@ -19,6 +20,7 @@ final class AuthSessionStore {
   String? _accessTokenInMemory;
 
   /// Sync access for [AuthInterceptor]. Must call [loadFromStorage] at app start.
+  @override
   String? get accessToken => _accessTokenInMemory;
 
   Future<void> setTokens(AuthTokens tokens) async {

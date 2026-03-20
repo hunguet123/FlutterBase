@@ -21,7 +21,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -31,39 +30,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _onSubmit() async {
-    if (_formKey.currentState?.validate() != true || _isLoading) return;
+    final authAsync = ref.read(authNotifierProvider);
+    final isLoading =
+        authAsync.isLoading || (authAsync.asData?.value.isLoading ?? false);
+    if (_formKey.currentState?.validate() != true || isLoading) return;
 
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
-
-    setState(() => _isLoading = true);
 
     try {
       await ref.read(authNotifierProvider.notifier).login(username, password);
     } on MaintenanceException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(Translations.of(context).login.maintenanceError)),
+        SnackBar(
+          content: Text(Translations.of(context).login.maintenanceError),
+        ),
       );
     } on DioException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${Translations.of(context).login.errorLogin}: ${e.message}')),
+        SnackBar(
+          content: Text(
+            '${Translations.of(context).login.errorLogin}: ${e.message}',
+          ),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authAsync = ref.watch(authNotifierProvider);
+    final isLoading =
+        authAsync.isLoading || (authAsync.asData?.value.isLoading ?? false);
     final translations = Translations.of(context);
 
     return Scaffold(
@@ -81,9 +86,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   labelText: translations.login.username,
                   hintText: translations.login.hintUsername,
                   textInputAction: TextInputAction.next,
-                  enabled: !_isLoading,
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? translations.login.hintUsername : null,
+                  enabled: !isLoading,
+                  validator:
+                      (v) =>
+                          (v == null || v.isEmpty)
+                              ? translations.login.hintUsername
+                              : null,
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
@@ -92,16 +100,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   hintText: translations.login.hintPassword,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
-                  enabled: !_isLoading,
+                  enabled: !isLoading,
                   onFieldSubmitted: (_) => _onSubmit(),
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? translations.login.hintPassword : null,
+                  validator:
+                      (v) =>
+                          (v == null || v.isEmpty)
+                              ? translations.login.hintPassword
+                              : null,
                 ),
                 const SizedBox(height: 24),
                 AppButton(
                   onPressed: _onSubmit,
                   text: translations.login.submit,
-                  isLoading: _isLoading,
+                  isLoading: isLoading,
                 ),
               ],
             ),
