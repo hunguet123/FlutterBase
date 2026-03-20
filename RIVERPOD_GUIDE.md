@@ -57,7 +57,7 @@ class LoginNotifier extends _$LoginNotifier {
 
 **Async Notifier** — dùng khi `build()` cần await (ví dụ: check session):
 ```dart
-// lib/app/providers/auth_session_notifier.dart
+// lib/app/session/auth_session_notifier.dart
 @Riverpod(keepAlive: true, dependencies: [authRepository, analytics])
 class AuthSessionNotifier extends _$AuthSessionNotifier {
   @override

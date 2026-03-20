@@ -27,7 +27,7 @@ lib/features/auth/
 **Quy tắc phụ thuộc:**
 - `domain/` không import bất kỳ thứ gì ngoài Dart core.
 - `data/` được phép import `domain/` và thư viện hạ tầng (Dio, Firebase...).
-- `presentation/` chỉ import `domain/` và `data/` của cùng feature, hoặc `app/providers/`.
+- `presentation/` chỉ import `domain/` và `data/` của cùng feature, hoặc `app/session/`.
 
 ---
 

@@ -28,7 +28,7 @@ Code được tổ chức theo Clean Architecture trong thư mục `lib/`:
 ```
 lib/
 ├── app/
-│   └── providers/              # App-level state dùng chung toàn app
+│   └── session/                # App-level session state dùng chung toàn app
 │       ├── auth_session_state.dart
 │       ├── auth_session_notifier.dart   # Quản lý trạng thái đăng nhập/đăng xuất
 │       ├── app_auth_provider.dart       # isLoggedIn cho router
@@ -69,7 +69,8 @@ lib/
 ├── routing/
 │   ├── app_routes.dart              # Path constants
 │   ├── analytics_route_observer.dart # NavigatorObserver cho Analytics
-│   ├── router_refresh_notifier.dart  # Bridge Riverpod → GoRouter + provider
+│   ├── router_refresh_state.dart     # Immutable state cho RouterRefreshNotifier
+│   ├── router_refresh_notifier.dart  # Bridge Riverpod → GoRouter + ChangeNotifier provider
 │   └── app_router.dart              # createAppRouter + routerProvider
 ├── shared/
 │   └── widgets/                # AppButton, AppTextField, AppAppBar
@@ -87,7 +88,7 @@ App sử dụng flavor để tách biệt môi trường **Development** và **P
 
 ### 3.2. Luồng Authentication (Đăng nhập)
 1.  Khi app khởi động (`main.dart`), token được load từ `SecureStorage` vào `AuthSessionStore`.
-2.  `AuthSessionNotifier` (tại `app/providers/`) kiểm tra session qua `AuthRepository`.
+2.  `AuthSessionNotifier` (tại `app/session/`) kiểm tra session qua `AuthRepository`.
 3.  `App` widget (`app.dart`) watch `authSessionNotifierProvider`:
     *   Nếu đang load: Hiển thị `CircularProgressIndicator`.
     *   Nếu đã load: GoRouter tự redirect dựa trên `appIsLoggedInProvider`.
