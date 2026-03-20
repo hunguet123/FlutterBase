@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,25 +45,21 @@ class FcmService {
 
     // Log token
     final token = await getToken();
-    // ignore: avoid_print
-    print('FCM Token: $token');
+    log('FCM Token: $token');
 
     onTokenRefresh.listen((token) {
-      // ignore: avoid_print
-      print('FCM Token Refreshed: $token');
+      log('FCM Token Refreshed: $token');
       // TODO: Send new token to backend session
     });
 
     onMessage.listen((msg) {
       // Foreground message – log or show in-app notification
-      // ignore: avoid_print
-      print('FCM foreground: ${msg.notification?.title}');
+      log('FCM foreground: ${msg.notification?.title}');
     });
 
     onMessageOpenedApp.listen((msg) {
       // User tapped notification – handle deep link / navigate
-      // ignore: avoid_print
-      print('FCM opened: ${msg.data}');
+      log('FCM opened: ${msg.data}');
     });
   }
 }

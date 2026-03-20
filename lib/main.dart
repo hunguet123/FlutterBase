@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui' show PlatformDispatcher;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -26,8 +27,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   await Firebase.initializeApp();
 
-  // ignore: avoid_print
-  print('Background message: ${message.messageId}');
+  log('Background message: ${message.messageId}');
 }
 
 void main() async {

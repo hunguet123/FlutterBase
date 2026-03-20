@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -12,18 +13,13 @@ class ApiLogInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    // ignore: avoid_print
-    print('┌------------------------------------------------------------------------------');
-    // ignore: avoid_print
-    print('| REQUEST 🌐 ${options.method} ${options.uri}');
-    // ignore: avoid_print
-    print('| Headers: ${options.headers}');
+    log('┌------------------------------------------------------------------------------');
+    log('| REQUEST 🌐 ${options.method} ${options.uri}');
+    log('| Headers: ${options.headers}');
     if (options.data != null) {
-      // ignore: avoid_print
-      print('| Body: ${options.data}');
+      log('| Body: ${options.data}');
     }
-    // ignore: avoid_print
-    print('└------------------------------------------------------------------------------');
+    log('└------------------------------------------------------------------------------');
     handler.next(options);
   }
 
@@ -32,16 +28,12 @@ class ApiLogInterceptor extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-    // ignore: avoid_print
-    print('┌------------------------------------------------------------------------------');
-    // ignore: avoid_print
-    print('| RESPONSE ✅ ${response.statusCode} ${response.requestOptions.uri}');
+    log('┌------------------------------------------------------------------------------');
+    log('| RESPONSE ✅ ${response.statusCode} ${response.requestOptions.uri}');
     if (response.data != null) {
-      // ignore: avoid_print
-      print('| Payload: ${response.data}');
+      log('| Payload: ${response.data}');
     }
-    // ignore: avoid_print
-    print('└------------------------------------------------------------------------------');
+    log('└------------------------------------------------------------------------------');
     handler.next(response);
   }
 
@@ -50,18 +42,13 @@ class ApiLogInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) {
-    // ignore: avoid_print
-    print('┌------------------------------------------------------------------------------');
-    // ignore: avoid_print
-    print('| ERROR ❌ ${err.response?.statusCode} ${err.requestOptions.uri}');
-    // ignore: avoid_print
-    print('| Message: ${err.message}');
+    log('┌------------------------------------------------------------------------------');
+    log('| ERROR ❌ ${err.response?.statusCode} ${err.requestOptions.uri}');
+    log('| Message: ${err.message}');
     if (err.response?.data != null) {
-      // ignore: avoid_print
-      print('| Response Data: ${err.response?.data}');
+      log('| Response Data: ${err.response?.data}');
     }
-    // ignore: avoid_print
-    print('└------------------------------------------------------------------------------');
+    log('└------------------------------------------------------------------------------');
     handler.next(err);
   }
 }
