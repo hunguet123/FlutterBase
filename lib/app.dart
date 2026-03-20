@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_base/core/config/app_theme.dart';
-import 'package:flutter_base/features/auth/providers/auth_provider.dart';
+import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_router.dart';
 

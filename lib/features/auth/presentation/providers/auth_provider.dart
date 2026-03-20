@@ -7,7 +7,7 @@ import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
 import 'package:flutter_base/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
-import 'package:flutter_base/features/auth/providers/auth_state.dart';
+import 'package:flutter_base/features/auth/presentation/providers/auth_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_provider.g.dart';
@@ -70,6 +70,7 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> logout() async {
     await _authRepository.logout();
     ref.read(analyticsProvider).logEvent(name: AnalyticsEvents.logout);
+
     final current = state.value ?? AuthState.initial(isLoggedIn: false);
     state = AsyncValue.data(
       current.copyWith(isLoading: false, isLoggedIn: false, password: ''),

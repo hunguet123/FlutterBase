@@ -6,7 +6,7 @@ import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
-import 'package:flutter_base/features/auth/providers/auth_provider.dart';
+import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
 
 /// Home screen shown after successful login.
 class HomeScreen extends ConsumerWidget {

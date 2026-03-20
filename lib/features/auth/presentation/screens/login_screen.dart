@@ -7,7 +7,7 @@ import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
-import 'package:flutter_base/features/auth/providers/auth_provider.dart';
+import 'package:flutter_base/features/auth/presentation/providers/auth_provider.dart';
 
 /// Login screen. On successful API login navigates to Home.
 class LoginScreen extends ConsumerStatefulWidget {
