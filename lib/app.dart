@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_base/core/config/app_theme.dart';
-import 'package:flutter_base/features/auth/presentation/session/auth_session_notifier.dart';
+import 'package:flutter_base/core/theme/app_theme.dart';
+import 'package:flutter_base/app/providers/auth_session_notifier.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/app_router.dart';
 

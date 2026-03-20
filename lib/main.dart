@@ -10,7 +10,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_base/app.dart';
 import 'package:flutter_base/core/config/env.dart';
 import 'package:flutter_base/core/config/remote_config_provider.dart';
-import 'package:flutter_base/core/messaging/fcm_service.dart';
+import 'package:flutter_base/core/messaging/data/fcm_service.dart';
+import 'package:flutter_base/core/network/auth_token_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 
@@ -48,7 +49,15 @@ Future<ProviderContainer> initServices() async {
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
   // 3. Initialize services using Riverpod
-  final container = ProviderContainer();
+  // Override authTokenProviderRef with the concrete AuthSessionStore so that
+  // core/network remains free of any dependency on features/.
+  final container = ProviderContainer(
+    overrides: [
+      authTokenProviderRef.overrideWith(
+        (ref) => ref.watch(authSessionStoreProvider),
+      ),
+    ],
+  );
 
   // Remote Config (same instance as [remoteConfigProvider])
   await initRemoteConfig(container.read(remoteConfigProvider));

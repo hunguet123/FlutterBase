@@ -4,9 +4,9 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
-import 'package:flutter_base/core/messaging/data/mappers/fcm_message_mapper.dart';
+import 'package:flutter_base/core/messaging/domain/models/fcm_message.dart';
 import 'package:flutter_base/core/messaging/domain/models/fcm_token.dart';
+import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fcm_service.g.dart';
@@ -74,12 +74,12 @@ class FcmService {
     });
 
     _onMessageSub = onMessage.listen((msg) {
-      final fcmMessage = fcmMessageFromRemoteMessage(msg);
+      final fcmMessage = _fcmMessageFromRemoteMessage(msg);
       log('FCM foreground: ${fcmMessage.title}');
     });
 
     _onMessageOpenedAppSub = onMessageOpenedApp.listen((msg) {
-      final fcmMessage = fcmMessageFromRemoteMessage(msg);
+      final fcmMessage = _fcmMessageFromRemoteMessage(msg);
       log('FCM opened: ${fcmMessage.data}');
     });
   }
@@ -95,9 +95,21 @@ class FcmService {
     _onMessageSub = null;
     _onMessageOpenedAppSub = null;
   }
+
+  Future<void> dispose() => _cancelForegroundSubscriptions();
+}
+
+FcmMessage _fcmMessageFromRemoteMessage(RemoteMessage message) {
+  return FcmMessage(
+    messageId: message.messageId,
+    title: message.notification?.title,
+    data: message.data,
+  );
 }
 
 @Riverpod(keepAlive: true, dependencies: [])
 FcmService fcmService(Ref ref) {
-  return FcmService(FirebaseMessaging.instance);
+  final service = FcmService(FirebaseMessaging.instance);
+  ref.onDispose(service.dispose);
+  return service;
 }

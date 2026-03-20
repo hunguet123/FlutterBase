@@ -1,28 +1,31 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_config_provider.dart';
+part of 'app_maintenance_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appConfigHash() => r'e81422ebf06e1a1a2c530f39578738c42f1513fb';
+String _$appIsMaintenanceHash() => r'89a277b633bf0b613110faad083377d32e2ba7dc';
 
-/// Provides app-wide Remote Config values as a domain-friendly model.
+/// App-level maintenance flag for routing.
+/// Reactive: updates whenever Remote Config pushes a new value.
 ///
-/// Copied from [appConfig].
-@ProviderFor(appConfig)
-final appConfigProvider = Provider<AppConfig>.internal(
-  appConfig,
-  name: r'appConfigProvider',
+/// Copied from [appIsMaintenance].
+@ProviderFor(appIsMaintenance)
+final appIsMaintenanceProvider = Provider<bool>.internal(
+  appIsMaintenance,
+  name: r'appIsMaintenanceProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appConfigHash,
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$appIsMaintenanceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AppConfigRef = ProviderRef<AppConfig>;
+typedef AppIsMaintenanceRef = ProviderRef<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,5 +1,5 @@
-import 'package:flutter_base/core/analytics/analytics_events.dart';
-import 'package:flutter_base/core/analytics/analytics_provider.dart';
+import 'package:flutter_base/core/analytics/data/analytics_events.dart';
+import 'package:flutter_base/core/analytics/data/analytics_provider.dart';
 import 'package:flutter_base/core/config/data/app_config_provider.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_notifier.g.dart';
 
-@Riverpod(keepAlive: true, dependencies: [authRepository, appConfig, analytics])
+@Riverpod(dependencies: [authRepository, appConfig, analytics])
 class LoginNotifier extends _$LoginNotifier {
   @override
   LoginState build() => LoginState.initial();
@@ -22,27 +22,16 @@ class LoginNotifier extends _$LoginNotifier {
 
     final authRepository = ref.read(authRepositoryProvider);
 
-    final current = state;
-    state = current.copyWith(
-      username: username,
-      password: password,
-      isLoading: true,
-    );
+    state = state.copyWith(isLoading: true);
 
     try {
       await authRepository.login(username, password);
       ref.read(analyticsProvider).logEvent(name: AnalyticsEvents.login);
-
-      state = current.copyWith(
-        username: username,
-        password: password,
-        isLoading: false,
-      );
-
+      state = state.copyWith(isLoading: false);
       // Refresh app-level auth status for router redirect.
       ref.invalidate(authSessionNotifierProvider);
     } catch (e) {
-      state = current.copyWith(isLoading: false);
+      state = state.copyWith(isLoading: false);
       rethrow;
     }
   }

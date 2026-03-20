@@ -8,9 +8,7 @@ part of 'auth_session_store.dart';
 
 String _$authSessionStoreHash() => r'2eccda9f055a99336a27eddea404dd59dde64a2b';
 
-/// Provider for AuthSessionStore. Depends on [secureStorageProvider] for testability.
-///
-/// Copied from [authSessionStore].
+/// See also [authSessionStore].
 @ProviderFor(authSessionStore)
 final authSessionStoreProvider = Provider<AuthSessionStore>.internal(
   authSessionStore,

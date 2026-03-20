@@ -6,12 +6,12 @@ part of 'login_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$loginNotifierHash() => r'6f93b6072fd03488b190e049cd25b4c23751ae26';
+String _$loginNotifierHash() => r'd3231d92c7c8ffb62885eae02cbaa03bc4830ee1';
 
 /// See also [LoginNotifier].
 @ProviderFor(LoginNotifier)
 final loginNotifierProvider =
-    NotifierProvider<LoginNotifier, LoginState>.internal(
+    AutoDisposeNotifierProvider<LoginNotifier, LoginState>.internal(
       LoginNotifier.new,
       name: r'loginNotifierProvider',
       debugGetCreateSourceHash:
@@ -33,6 +33,6 @@ final loginNotifierProvider =
       },
     );
 
-typedef _$LoginNotifier = Notifier<LoginState>;
+typedef _$LoginNotifier = AutoDisposeNotifier<LoginState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

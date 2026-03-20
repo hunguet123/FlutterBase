@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'package:flutter_base/core/config/env.dart';
 import 'package:flutter_base/core/network/api_interceptors.dart';
-import 'package:flutter_base/features/auth/domain/services/auth_token_provider.dart';
+import 'package:flutter_base/features/auth/domain/interfaces/auth_token_provider.dart';
 
 /// Creates and configures Dio instance for API calls.
 Dio createApiClient(AuthTokenProvider tokenProvider) {

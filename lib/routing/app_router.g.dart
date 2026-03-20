@@ -6,29 +6,7 @@ part of 'app_router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authRefreshNotifierHash() =>
-    r'a478391833b42d86ac44fa7a97e35f7dc462b72f';
-
-/// Provider for GoRouterRefreshNotifier.
-///
-/// Copied from [authRefreshNotifier].
-@ProviderFor(authRefreshNotifier)
-final authRefreshNotifierProvider =
-    Provider<Raw<GoRouterRefreshNotifier>>.internal(
-      authRefreshNotifier,
-      name: r'authRefreshNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$authRefreshNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef AuthRefreshNotifierRef = ProviderRef<Raw<GoRouterRefreshNotifier>>;
-String _$routerHash() => r'fe8152ef56eaa2156c2087dfe96882e758abd9d7';
+String _$routerHash() => r'365fb63ad28b364de0a274d1db3606b2f9a06b1a';
 
 /// Provider for application router.
 ///
