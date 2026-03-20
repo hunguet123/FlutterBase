@@ -13,28 +13,39 @@ import 'package:flutter_base/routing/app_routes.dart';
 
 /// Root app widget. Wraps MaterialApp with router, localization, theme.
 /// Also handles app-level events emitted by feature screens.
-class App extends ConsumerWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authAsync = ref.watch(authSessionNotifierProvider);
-    final router = ref.watch(routerProvider);
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  @override
+  void initState() {
+    super.initState();
 
     ref.listen<AppEvent?>(appEventNotifierProvider, (_, event) async {
       switch (event) {
         case LogoutRequested():
           await ref.read(authSessionNotifierProvider.notifier).logout();
-          router.go(AppRoutes.login);
+          ref.read(routerProvider).go(AppRoutes.login);
         case null:
           break;
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authAsync = ref.watch(authSessionNotifierProvider);
+    final router = ref.watch(routerProvider);
 
     return authAsync.when(
       loading: () => _buildApp(
         context,
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        home:
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       error: (_, _) => _buildApp(context, router: router),
       data: (_) => _buildApp(context, router: router),

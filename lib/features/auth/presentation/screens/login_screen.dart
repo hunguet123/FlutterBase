@@ -22,6 +22,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    ref.listen(loginNotifierProvider, (previous, next) {
+      final error = next.error;
+      if (error == null || error == previous?.error) return;
+
+      // Ensure the snackbar is shown after the current frame renders.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final t = Translations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_errorMessage(error, t))),
+        );
+      });
+    });
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
@@ -36,12 +55,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  String _errorMessage(Object error, Translations t) {
+  String _errorMessage(AppException error, Translations t) {
     return switch (error) {
       ValidationException e => e.message,
       MaintenanceException() => t.login.maintenanceError,
       NetworkException e => '${t.login.errorLogin}: ${e.message}',
-      _ => error.toString(),
+      _ => error.message,
     };
   }
 
@@ -49,14 +68,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final isLoading = ref.watch(loginNotifierProvider).isLoading;
-
-    ref.listen(loginNotifierProvider, (previous, next) {
-      final error = next.error;
-      if (error == null || error == previous?.error) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_errorMessage(error, t))),
-      );
-    });
 
     return Scaffold(
       appBar: AppAppBar(title: t.login.title),
