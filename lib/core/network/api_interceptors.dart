@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
-import 'package:flutter_base/features/auth/domain/interfaces/auth_token_provider.dart';
+import 'package:flutter_base/core/network/auth_token_provider.dart';
 
 /// Logging interceptor for debug.
 class ApiLogInterceptor extends Interceptor {

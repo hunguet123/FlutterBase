@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:flutter_base/core/storage/secure_storage.dart';
-import 'package:flutter_base/features/auth/domain/interfaces/auth_token_provider.dart';
+import 'package:flutter_base/core/network/auth_token_provider.dart';
 import 'package:flutter_base/features/auth/domain/models/auth_tokens.dart';
 
 part 'auth_session_store.g.dart';
