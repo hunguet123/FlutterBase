@@ -44,6 +44,9 @@ Copy các file mẫu thành file thực tế và điền giá trị của bạn:
 - `cp .env.dev.example .env.dev`
 - `cp .env.prod.example .env.prod`
 
+**Tải file cấu hình thực tế**: Để ứng dụng có thể chạy và kết nối Firebase, bạn cần tải các file `.env` và `google-services.json`/`.plist` chính thức từ thư mục sau và đặt vào dự án:
+🔗 **[Tải File Cấu Hình Tại Đây (Google Drive)](https://drive.google.com/drive/folders/17B1QGgf9HJdskwhfEXoZ__txqpwjuo2E?usp=sharing)**
+
 ### 2. Firebase Setup (Android/iOS)
 Vui lòng đặt các file `google-services.json` và `GoogleService-Info.plist` vào đúng thư mục flavor (`src/development` hoặc `src/production`) như mô tả chi tiết trong **[Firebase Guide](FIREBASE_GUIDE.md)**.
 
