@@ -18,39 +18,44 @@ class App extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return authAsync.when(
-      loading: () => _buildApp(
-        context,
-        home: const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      ),
+      loading:
+          () => _buildApp(
+            context,
+            home: const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          ),
       error: (_, _) => _buildApp(context, router: router),
       data: (_) => _buildApp(context, router: router),
     );
   }
 
   Widget _buildApp(BuildContext context, {GoRouter? router, Widget? home}) {
-    final translations = Translations.of(context);
+    // Avoid calling `Translations.of(context)` before `TranslationProvider`
+    // is placed in the widget tree (it throws if InheritedLocaleData
+    // is not available yet).
+    final translations = t;
 
-    final child = home != null
-        ? MaterialApp(
-            title: translations.app.title,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            home: home,
-            locale: LocaleSettings.currentLocale.flutterLocale,
-            supportedLocales: AppLocaleUtils.supportedLocales,
-            localizationsDelegates: _localizationsDelegates,
-          )
-        : MaterialApp.router(
-            title: translations.app.title,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            routerConfig: router,
-            locale: LocaleSettings.currentLocale.flutterLocale,
-            supportedLocales: AppLocaleUtils.supportedLocales,
-            localizationsDelegates: _localizationsDelegates,
-          );
+    final child =
+        home != null
+            ? MaterialApp(
+              title: translations.app.title,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              home: home,
+              locale: LocaleSettings.currentLocale.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: _localizationsDelegates,
+            )
+            : MaterialApp.router(
+              title: translations.app.title,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              routerConfig: router,
+              locale: LocaleSettings.currentLocale.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: _localizationsDelegates,
+            );
 
     return TranslationProvider(child: child);
   }
