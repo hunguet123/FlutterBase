@@ -4,7 +4,6 @@ import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/analytics_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
-import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

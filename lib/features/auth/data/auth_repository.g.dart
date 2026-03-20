@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_repository_provider.dart';
+part of 'auth_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -8,7 +8,7 @@ part of 'auth_repository_provider.dart';
 
 String _$authRepositoryHash() => r'e0f6cb0d8604e0eac9cd3c63d279ed79ea83305c';
 
-/// Provides [AuthRepository] implementation.
+/// Provider for [AuthRepository]. Defines itself in the data layer for neatness.
 ///
 /// Copied from [authRepository].
 @ProviderFor(authRepository)

@@ -48,7 +48,7 @@ final authRefreshNotifierProvider =
 // ignore: unused_element
 typedef AuthRefreshNotifierRef =
     AutoDisposeProviderRef<Raw<GoRouterRefreshNotifier>>;
-String _$routerHash() => r'b9159add089233ef94aca747fdb3b1656632a7da';
+String _$routerHash() => r'0bc675725d30336a2216e990d1f996ce89f424f9';
 
 /// Provider for application router.
 ///

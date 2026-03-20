@@ -8,7 +8,7 @@ import 'package:flutter_base/features/auth/presentation/screens/login_screen.dar
 import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_base/routing/app_routes.dart';
-import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
+import 'package:flutter_base/features/auth/data/auth_repository.dart';
 import 'package:flutter_base/core/network/api_client_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 import 'package:flutter_base/core/config/remote_config_keys.dart';

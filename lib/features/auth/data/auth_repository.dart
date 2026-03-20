@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
-
+import 'package:flutter_base/core/network/api_client_provider.dart';
 import 'package:flutter_base/features/auth/data/auth_session_store.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'auth_repository.g.dart';
 
 /// Repository for authentication. Calls API for login, manages tokens.
 abstract interface class AuthRepository {
@@ -69,4 +73,12 @@ class AuthRepositoryImpl implements AuthRepository {
     final tokenAfter = _sessionStore.accessToken;
     return tokenAfter != null && tokenAfter.isNotEmpty;
   }
+}
+
+/// Provider for [AuthRepository]. Defines itself in the data layer for neatness.
+@Riverpod(dependencies: [apiClient, authSessionStore])
+AuthRepository authRepository(Ref ref) {
+  final dio = ref.watch(apiClientProvider);
+  final sessionStore = ref.watch(authSessionStoreProvider);
+  return AuthRepositoryImpl(dio, sessionStore);
 }
