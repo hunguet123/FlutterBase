@@ -11,9 +11,10 @@ abstract interface class AuthRepository {
 
 /// Implementation using Dio for API calls.
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._dio);
+  AuthRepositoryImpl(this._dio, this._sessionStore);
 
   final Dio _dio;
+  final AuthSessionStore _sessionStore;
   static const _loginPath = '/auth/login';
 
   @override
@@ -38,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final refreshToken = data['refresh_token'] as String?;
 
       if (accessToken != null && accessToken.isNotEmpty) {
-        await AuthSessionStore.instance.setTokens(accessToken, refreshToken);
+        await _sessionStore.setTokens(accessToken, refreshToken);
       } else {
         throw DioException(
           requestOptions: response.requestOptions,
@@ -57,15 +58,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    await AuthSessionStore.instance.clear();
+    await _sessionStore.clear();
   }
 
   @override
   Future<bool> hasSession() async {
-    final token = AuthSessionStore.instance.accessToken;
+    final token = _sessionStore.accessToken;
     if (token != null && token.isNotEmpty) return true;
-    await AuthSessionStore.instance.loadFromStorage();
-    final tokenAfter = AuthSessionStore.instance.accessToken;
+    await _sessionStore.loadFromStorage();
+    final tokenAfter = _sessionStore.accessToken;
     return tokenAfter != null && tokenAfter.isNotEmpty;
   }
 }

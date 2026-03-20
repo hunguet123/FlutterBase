@@ -2,9 +2,10 @@ import 'package:dio/dio.dart';
 
 import 'package:flutter_base/core/config/env.dart';
 import 'package:flutter_base/core/network/api_interceptors.dart';
+import 'package:flutter_base/features/auth/data/auth_session_store.dart';
 
 /// Creates and configures Dio instance for API calls.
-Dio createApiClient() {
+Dio createApiClient(AuthSessionStore sessionStore) {
   final dio = Dio(
     BaseOptions(
       baseUrl: Env.apiBaseUrl,
@@ -19,7 +20,7 @@ Dio createApiClient() {
 
   dio.interceptors.addAll([
     ApiLogInterceptor(),
-    AuthInterceptor(),
+    AuthInterceptor(sessionStore),
     ErrorInterceptor(),
   ]);
 

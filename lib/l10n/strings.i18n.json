@@ -9,7 +9,8 @@
     "submit": "Đăng nhập",
     "hintUsername": "Nhập tên đăng nhập",
     "hintPassword": "Nhập mật khẩu",
-    "errorLogin": "Đăng nhập thất bại"
+    "errorLogin": "Đăng nhập thất bại",
+    "maintenanceError": "Hệ thống đang bảo trì. Vui lòng thử lại sau."
   },
   "home": {
     "title": "Trang chủ",

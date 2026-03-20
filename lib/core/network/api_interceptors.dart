@@ -55,12 +55,16 @@ class ApiLogInterceptor extends Interceptor {
 
 /// Adds Bearer token to requests when user is logged in.
 class AuthInterceptor extends Interceptor {
+  AuthInterceptor(this._sessionStore);
+
+  final AuthSessionStore _sessionStore;
+
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    final token = AuthSessionStore.instance.accessToken;
+    final token = _sessionStore.accessToken;
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }

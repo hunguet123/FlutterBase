@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_base/core/config/remote_config_keys.dart';
 import 'package:flutter_base/core/config/remote_config_service.dart';
+import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/core/analytics/analytics_service.dart';
 import 'package:flutter_base/features/auth/data/auth_repository.dart';
@@ -20,7 +21,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
   Future<void> login(String username, String password) async {
     final remoteConfig = ref.read(remoteConfigProvider);
     if (remoteConfig.getBool(RemoteConfigKeys.maintenanceMode)) {
-      throw Exception('Hệ thống đang bảo trì. Vui lòng thử lại sau.');
+      throw MaintenanceException();
     }
 
     state = await AsyncValue.guard(() async {

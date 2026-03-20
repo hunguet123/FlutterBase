@@ -9,7 +9,8 @@
     "submit": "Login",
     "hintUsername": "Enter username",
     "hintPassword": "Enter password",
-    "errorLogin": "Login failed"
+    "errorLogin": "Login failed",
+    "maintenanceError": "System is under maintenance. Please try again later."
   },
   "home": {
     "title": "Home",

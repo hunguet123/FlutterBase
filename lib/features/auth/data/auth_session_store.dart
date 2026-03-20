@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_base/core/storage/secure_storage.dart';
 
@@ -59,3 +60,8 @@ final class AuthSessionStore {
   /// For refresh flow: read refreshToken without exposing sync.
   Future<String?> getRefreshToken() => _secureStorage.read(_refreshTokenKey);
 }
+
+/// Provider for AuthSessionStore. Uses the singleton instance.
+final authSessionStoreProvider = Provider<AuthSessionStore>((ref) {
+  return AuthSessionStore.instance;
+});

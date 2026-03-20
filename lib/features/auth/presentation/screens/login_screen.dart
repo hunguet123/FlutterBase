@@ -8,6 +8,7 @@ import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';
 import 'package:flutter_base/shared/widgets/app_text_field.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
+import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/features/auth/providers/auth_provider.dart';
 
 /// Login screen. On successful API login navigates to Home.
@@ -43,10 +44,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref.read(authNotifierProvider.notifier).login(username, password);
       if (!mounted) return;
       context.go(AppRoutes.home);
+    } on MaintenanceException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(Translations.of(context).login.maintenanceError)),
+      );
     } on DioException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${Translations.of(context).login.errorLogin}: ${e.message}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       if (mounted) {
