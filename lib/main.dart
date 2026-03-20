@@ -2,7 +2,6 @@ import 'dart:ui' show PlatformDispatcher;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,22 +19,22 @@ void main() async {
   final container = await initServices();
 
   // 6. Run app with UncontrolledProviderScope to reuse the same container
-  runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const App(),
-    ),
-  );
+  runApp(UncontrolledProviderScope(container: container, child: const App()));
 }
 
-/// Initializes all core services (Firebase, Env, Auth, FCM, etc.) 
+/// Initializes all core services (Firebase, Env, Auth, FCM, etc.)
 /// and returns the configured ProviderContainer.
 Future<ProviderContainer> initServices() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 1. Load env via flutter_dotenv based on flavor
-  const flavor = String.fromEnvironment('FLUTTER_APP_FLAVOR', defaultValue: 'development');
-  await dotenv.load(fileName: flavor == 'production' ? '.env.prod' : '.env.dev');
-  
+  const flavor = String.fromEnvironment(
+    'FLUTTER_APP_FLAVOR',
+    defaultValue: 'development',
+  );
+  await dotenv.load(
+    fileName: flavor == 'production' ? '.env.prod' : '.env.dev',
+  );
+
   assert(Env.apiBaseUrl.isNotEmpty, 'API_BASE_URL must be set in .env');
 
   await Firebase.initializeApp();
@@ -50,10 +49,10 @@ Future<ProviderContainer> initServices() async {
 
   // 3. Initialize services using Riverpod
   final container = ProviderContainer();
-  
-  // Remote Config
-  await initRemoteConfig(FirebaseRemoteConfig.instance);
-  
+
+  // Remote Config (same instance as [remoteConfigProvider])
+  await initRemoteConfig(container.read(remoteConfigProvider));
+
   // FCM (Background + Foreground)
   await container.read(fcmServiceProvider).init();
 
@@ -62,6 +61,6 @@ Future<ProviderContainer> initServices() async {
 
   // 5. Load auth tokens from SecureStorage into memory before app starts
   await container.read(authSessionStoreProvider).loadFromStorage();
-  
+
   return container;
 }

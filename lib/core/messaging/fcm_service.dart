@@ -1,15 +1,15 @@
+import 'dart:async';
 import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_base/core/messaging/fcm_background_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fcm_service.g.dart';
 
-/// Provider for Firebase Messaging instance.
-@Riverpod(keepAlive: true, dependencies: [])
-FirebaseMessaging firebaseMessaging(Ref ref) =>
-    FirebaseMessaging.instance;
+var _backgroundHandlerRegistered = false;
 
 /// FCM service for managing push notifications.
 /// Handles permission request, foreground/background messages, token, and tap handling.
@@ -17,6 +17,10 @@ class FcmService {
   FcmService(this._messaging);
 
   final FirebaseMessaging _messaging;
+
+  StreamSubscription<String>? _tokenRefreshSub;
+  StreamSubscription<RemoteMessage>? _onMessageSub;
+  StreamSubscription<RemoteMessage>? _onMessageOpenedAppSub;
 
   /// Request notification permission (iOS / Android 13+).
   Future<NotificationSettings> requestPermission() {
@@ -28,8 +32,6 @@ class FcmService {
       carPlay: false,
       criticalAlert: false,
       provisional: false,
-      // ignore: deprecated_member_use
-      // clickAction: '', // Not used in modern FCM libs but some old code might have it
     );
   }
 
@@ -48,31 +50,49 @@ class FcmService {
 
   /// Setup all listeners and request permissions.
   Future<void> init() async {
-    // Register background handler
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    if (!_backgroundHandlerRegistered) {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      _backgroundHandlerRegistered = true;
+    }
 
     await requestPermission();
 
-    // Log token
     final token = await getToken();
-    log('FCM Token: $token');
+    if (kDebugMode) {
+      log('FCM Token: $token');
+    }
 
-    onTokenRefresh.listen((token) {
-      log('FCM Token Refreshed: $token');
+    await _cancelForegroundSubscriptions();
+
+    _tokenRefreshSub = onTokenRefresh.listen((newToken) {
+      if (kDebugMode) {
+        log('FCM Token Refreshed: $newToken');
+      }
     });
 
-    onMessage.listen((msg) {
+    _onMessageSub = onMessage.listen((msg) {
       log('FCM foreground: ${msg.notification?.title}');
     });
 
-    onMessageOpenedApp.listen((msg) {
+    _onMessageOpenedAppSub = onMessageOpenedApp.listen((msg) {
       log('FCM opened: ${msg.data}');
     });
   }
+
+  /// Cancels foreground stream listeners. Safe to call multiple times.
+  Future<void> _cancelForegroundSubscriptions() async {
+    await Future.wait([
+      _tokenRefreshSub?.cancel() ?? Future<void>.value(),
+      _onMessageSub?.cancel() ?? Future<void>.value(),
+      _onMessageOpenedAppSub?.cancel() ?? Future<void>.value(),
+    ]);
+    _tokenRefreshSub = null;
+    _onMessageSub = null;
+    _onMessageOpenedAppSub = null;
+  }
 }
 
-@Riverpod(keepAlive: true, dependencies: [firebaseMessaging])
+@Riverpod(keepAlive: true, dependencies: [])
 FcmService fcmService(Ref ref) {
-  final messaging = ref.watch(firebaseMessagingProvider);
-  return FcmService(messaging);
+  return FcmService(FirebaseMessaging.instance);
 }
