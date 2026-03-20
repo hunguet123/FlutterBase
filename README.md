@@ -8,6 +8,7 @@ Template Flutter với kiến trúc sẵn: Auth API, Riverpod, GoRouter, Firebas
 Để hiểu rõ hơn về cách vận hành và các tiêu chuẩn của dự án, vui lòng tham khảo các tài liệu sau:
 - 📘 **[Hướng dẫn cấu trúc dự án (Project Guide)](PROJECT_GUIDE.md)**: Chi tiết về kiến trúc layered, phân chia thư mục, quản lý môi trường (flavors) và Firebase.
 - 🚀 **[Hướng dẫn sử dụng Riverpod (Riverpod Guide)](RIVERPOD_GUIDE.md)**: Cách sử dụng Provider, AsyncNotifier, xử lý Side Effects và tối ưu hóa UI với Riverpod.
+- 🔥 **[Hướng dẫn Firebase (Firebase Guide)](FIREBASE_GUIDE.md)**: Cách cấu hình Remote Config, log Analytics và xử lý FCM thông báo.
 
 ---
 
