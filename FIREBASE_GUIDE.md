@@ -30,9 +30,9 @@ if (appConfig.maintenanceMode) { ... }
 
 ### Cách thêm key mới
 1. Thêm constant vào `lib/core/config/remote_config_keys.dart`.
-2. Thêm default value vào `initRemoteConfig()` trong `lib/core/config/data/remote_config_client_provider.dart`.
-3. Thêm field vào `AppConfig` tại `lib/core/config/domain/models/app_config.dart`.
-4. Map field trong `_appConfigFromRemoteConfig()` tại `lib/core/config/data/app_config_provider.dart`.
+2. Thêm default value vào `initRemoteConfig()` trong `lib/core/config/riverpod/remote_config_provider.dart`.
+3. Thêm field vào `AppConfig` tại `lib/core/config/app_config.dart`.
+4. Map field trong `_appConfigFromRemoteConfig()` tại `lib/core/config/riverpod/app_config_provider.dart`.
 
 ---
 
@@ -41,7 +41,7 @@ if (appConfig.maintenanceMode) { ... }
 Dùng để theo dõi người dùng đang làm gì trên ứng dụng.
 
 ### Log sự kiện (Events)
-Sử dụng hằng số tại `lib/core/analytics/data/analytics_events.dart` để đảm bảo đồng nhất:
+Sử dụng hằng số tại `lib/core/analytics/analytics_events.dart` để đảm bảo đồng nhất:
 
 ```dart
 ref.read(analyticsProvider).logEvent(

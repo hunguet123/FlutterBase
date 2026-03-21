@@ -1,7 +1,7 @@
 import 'package:flutter_base/core/analytics/analytics_events.dart';
-import 'package:flutter_base/core/analytics/data/analytics_provider.dart';
-import 'package:flutter_base/features/auth/data/auth_repository_provider.dart';
-import 'package:flutter_base/features/auth/domain/use_cases/logout_use_case_provider.dart';
+import 'package:flutter_base/core/analytics/riverpod/analytics_provider.dart';
+import 'package:flutter_base/features/auth/riverpod/auth_repository_provider.dart';
+import 'package:flutter_base/features/auth/riverpod/logout_use_case_provider.dart';
 import 'package:flutter_base/app/session/auth_session_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

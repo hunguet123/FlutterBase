@@ -70,8 +70,9 @@ lib/
 │   ├── app_routes.dart              # Path constants
 │   ├── analytics_route_observer.dart # NavigatorObserver cho Analytics
 │   ├── router_refresh_state.dart     # Immutable state cho RouterRefreshNotifier
-│   ├── router_refresh_notifier.dart  # Bridge Riverpod → GoRouter + ChangeNotifier provider
-│   └── app_router.dart              # createAppRouter + routerProvider
+│   ├── router_refresh_notifier.dart  # ChangeNotifier bridge (GoRouter refreshListenable)
+│   ├── go_router_factory.dart        # createAppRouter(...)
+│   └── riverpod/                     # @Riverpod: routerRefreshNotifier, router
 ├── shared/
 │   └── widgets/                # AppButton, AppTextField, AppAppBar
 └── l10n/                       # File ngôn ngữ (.i18n.json)

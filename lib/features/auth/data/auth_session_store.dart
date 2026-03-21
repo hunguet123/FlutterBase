@@ -1,11 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'package:flutter_base/core/storage/secure_storage.dart';
 import 'package:flutter_base/core/network/auth_token_provider.dart';
-import 'package:flutter_base/features/auth/domain/models/auth_tokens.dart';
-
-part 'auth_session_store.g.dart';
+import 'package:flutter_base/core/storage/secure_storage_contract.dart';
+import 'package:flutter_base/features/auth/domain/auth_tokens.dart';
 
 const _accessTokenKey = 'access_token';
 const _refreshTokenKey = 'refresh_token';
@@ -43,9 +38,4 @@ final class AuthSessionStore implements AuthTokenProvider {
 
   /// For refresh flow: read refreshToken without exposing sync.
   Future<String?> getRefreshToken() => _secureStorage.read(_refreshTokenKey);
-}
-
-@Riverpod(keepAlive: true, dependencies: [secureStorage])
-AuthSessionStore authSessionStore(Ref ref) {
-  return AuthSessionStore(ref.watch(secureStorageProvider));
 }

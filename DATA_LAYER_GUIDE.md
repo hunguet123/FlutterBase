@@ -10,24 +10,29 @@ Mỗi feature tuân theo Clean Architecture với 3 tầng rõ ràng:
 
 ```
 lib/features/auth/
-├── domain/
-│   ├── interfaces/
-│   │   └── auth_token_provider.dart   # Contract cho network layer (DI boundary)
-│   ├── models/
-│   │   └── auth_tokens.dart           # Domain model (AccessToken, RefreshToken)
-│   └── repositories/
-│       └── auth_repository.dart       # Contract (interface) của AuthRepository
-└── data/
-    ├── auth_session_store.dart        # Token storage (class + provider cùng file)
-    ├── auth_repository_provider.dart  # Riverpod wiring → trả về AuthRepository
-    └── repositories/
-        └── auth_repository_impl.dart  # Implementation cụ thể (Dio)
+├── domain/                    # Thuần Dart: model + contract + use case (thư mục phẳng)
+│   ├── auth_tokens.dart
+│   ├── auth_repository.dart
+│   ├── login_use_case.dart
+│   └── logout_use_case.dart
+├── data/                      # Triển khai feature: API + lưu trữ (không @Riverpod)
+│   ├── auth_session_store.dart
+│   └── auth_repository_impl.dart
+├── riverpod/                  # Toàn bộ @Riverpod đăng ký cho feature (DI)
+│   ├── auth_session_store_provider.dart
+│   ├── auth_repository_provider.dart
+│   ├── login_use_case_provider.dart
+│   └── logout_use_case_provider.dart
+└── ui/login/                  # Màn hình + notifier + state của màn login
+    ├── login_screen.dart
+    ├── login_notifier.dart
+    └── login_state.dart
 ```
 
 **Quy tắc phụ thuộc:**
-- `domain/` không import bất kỳ thứ gì ngoài Dart core.
-- `data/` được phép import `domain/` và thư viện hạ tầng (Dio, Firebase...).
-- `presentation/` chỉ import `domain/` và `data/` của cùng feature, hoặc `app/session/`.
+- `domain/` không import Flutter/Riverpod/Dio (trừ khi contract nằm ở `core/`).
+- `data/` được phép import `domain/` và thư viện hạ tầng (Dio, …).
+- `ui/` import `domain/`, `riverpod/`, `app/`, `core/` theo nhu cầu màn hình.
 
 ---
 
@@ -36,14 +41,14 @@ lib/features/auth/
 Dự án tách biệt `interface` (domain contract) và `implementation` (data class) để dễ mock khi test.
 
 ```dart
-// domain/repositories/auth_repository.dart
+// domain/auth_repository.dart
 abstract interface class AuthRepository {
   Future<void> login(String username, String password);
   Future<void> logout();
   Future<bool> hasSession();
 }
 
-// data/repositories/auth_repository_impl.dart
+// data/auth_repository_impl.dart
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._dio, this._sessionStore);
   // ...
@@ -54,10 +59,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
 ## 3. Provider Wiring
 
-Provider nằm trong `data/` để composition/dependency injection diễn ra đúng tầng. Dự án tuân thủ Riverpod 3.0 — phải khai báo `dependencies` rõ ràng.
+Đăng ký Riverpod cho feature auth nằm trong `features/auth/riverpod/`. Dự án tuân thủ Riverpod Generator — khai báo `dependencies` rõ ràng.
 
 ```dart
-// lib/features/auth/data/auth_repository_provider.dart
+// lib/features/auth/riverpod/auth_repository_provider.dart
 @Riverpod(dependencies: [apiClient, authSessionStore])
 AuthRepository authRepository(Ref ref) {
   final dio = ref.watch(apiClientProvider);
@@ -66,9 +71,7 @@ AuthRepository authRepository(Ref ref) {
 }
 ```
 
-**Khi nào tách provider ra file riêng?**
-- Nếu class nhỏ và provider chỉ wrap class đó: đặt cùng file (ví dụ `auth_session_store.dart`).
-- Nếu provider cần import nhiều dependency từ nhiều nơi: tách ra file riêng (ví dụ `auth_repository_provider.dart`).
+**Gợi ý:** class thuần (store, repository impl) nằm trong `data/`; file `@Riverpod` tương ứng nằm trong `riverpod/`.
 
 ---
 
@@ -80,9 +83,11 @@ AuthRepository authRepository(Ref ref) {
 | **Prefs Store** | `shared_preferences` | `preferencesStorageProvider` | Lưu theme, ngôn ngữ, cài đặt UI. |
 
 **Cấu trúc `core/storage/`:**
-- Contract (interface) nằm ở `domain/`.
-- Implementation + provider nằm ở `data/`.
-- Hai file barrel `secure_storage.dart` và `preferences_storage.dart` ở root chỉ re-export để thống nhất import.
+- Contract: `secure_storage_contract.dart`, `preferences_storage_contract.dart`.
+- Implementation: `secure_storage_impl.dart`, `preferences_storage_impl.dart` (cùng cấp, không tách `data/`).
+- Đăng ký Riverpod: `riverpod/` (import trực tiếp, không dùng file barrel `export`).
+
+**Cấu trúc `core/messaging/`:** model (`fcm_message`, `fcm_token`), `fcm_service.dart` (logic), `fcm_background_handler.dart`, `riverpod/` — không dùng thư mục `data/`.
 
 **Luồng token:**
 1. `secureStorageProvider` khởi tạo native storage.

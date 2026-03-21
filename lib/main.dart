@@ -9,10 +9,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:flutter_base/app.dart';
 import 'package:flutter_base/core/config/env.dart';
-import 'package:flutter_base/core/config/remote_config_provider.dart';
-import 'package:flutter_base/core/messaging/data/fcm_service.dart';
+import 'package:flutter_base/core/config/riverpod/remote_config_provider.dart';
+import 'package:flutter_base/core/messaging/riverpod/fcm_service_provider.dart';
 import 'package:flutter_base/core/network/auth_token_provider.dart';
-import 'package:flutter_base/features/auth/data/auth_session_store.dart';
+import 'package:flutter_base/features/auth/riverpod/auth_session_store_provider.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 
 void main() async {

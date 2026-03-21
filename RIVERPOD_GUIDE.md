@@ -35,7 +35,7 @@ Dùng khi cần expose các action (login, logout) và state có thể thay đ�
 
 **Sync Notifier** — dùng khi state không cần async khi khởi tạo:
 ```dart
-// lib/features/auth/presentation/providers/login_notifier.dart
+// lib/features/auth/ui/login/login_notifier.dart
 @Riverpod(dependencies: [authRepository, appConfig, analytics])
 class LoginNotifier extends _$LoginNotifier {
   @override

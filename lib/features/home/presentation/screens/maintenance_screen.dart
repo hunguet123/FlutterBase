@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:flutter_base/core/config/data/app_config_provider.dart';
-import 'package:flutter_base/core/config/remote_config_provider.dart';
+import 'package:flutter_base/core/config/riverpod/app_config_provider.dart';
+import 'package:flutter_base/core/config/riverpod/remote_config_provider.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
 

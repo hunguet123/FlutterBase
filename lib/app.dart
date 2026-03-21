@@ -8,7 +8,7 @@ import 'package:flutter_base/app/events/app_event_notifier.dart';
 import 'package:flutter_base/app/session/auth_session_notifier.dart';
 import 'package:flutter_base/core/theme/app_theme.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
-import 'package:flutter_base/routing/app_router.dart';
+import 'package:flutter_base/routing/riverpod/app_router_provider.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 
 /// Root app widget. Wraps MaterialApp with router, localization, theme.
