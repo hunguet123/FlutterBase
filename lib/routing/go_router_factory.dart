@@ -2,8 +2,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:flutter_base/core/analytics/analytics_events.dart';
 import 'package:flutter_base/features/auth/ui/login/login_screen.dart';
-import 'package:flutter_base/features/home/presentation/screens/home_screen.dart';
-import 'package:flutter_base/features/home/presentation/screens/maintenance_screen.dart';
+import 'package:flutter_base/features/home/ui/home_screen.dart';
+import 'package:flutter_base/features/home/ui/maintenance_screen.dart';
 import 'package:flutter_base/routing/analytics_route_observer.dart';
 import 'package:flutter_base/routing/app_routes.dart';
 import 'package:flutter_base/routing/router_refresh_notifier.dart';

@@ -28,44 +28,30 @@ Code được tổ chức theo Clean Architecture trong thư mục `lib/`:
 ```
 lib/
 ├── app/
-│   └── session/                # App-level session state dùng chung toàn app
-│       ├── auth_session_state.dart
-│       ├── auth_session_notifier.dart   # Quản lý trạng thái đăng nhập/đăng xuất
-│       ├── app_auth_provider.dart       # isLoggedIn cho router
-│       └── app_maintenance_provider.dart # isMaintenance cho router
+│   ├── session/                # auth_session_state.dart (model)
+│   ├── events/                 # app_event.dart (sealed events)
+│   └── riverpod/               # @Riverpod app-wide: session, router flags, events
+│       ├── auth_session_notifier.dart
+│       ├── app_auth_provider.dart      # isLoggedIn cho router
+│       ├── app_maintenance_provider.dart
+│       └── app_event_notifier.dart
 ├── core/                       # Hạ tầng dùng chung, không phụ thuộc features/
-│   ├── analytics/data/         # Firebase Analytics provider + event constants
-│   ├── config/                 # Remote Config, AppConfig model, env vars
-│   │   ├── domain/models/      # AppConfig (domain model)
-│   │   └── data/               # remoteConfigProvider, appConfigProvider
+│   ├── analytics/              # analytics_events + riverpod/analytics_provider
+│   ├── config/                 # AppConfig, env, Remote Config + riverpod/
 │   ├── constants/              # AppColors, AppDimens
-│   ├── exceptions/             # AppException, MaintenanceException, AuthException
-│   ├── messaging/              # FCM service
-│   │   ├── domain/models/      # FcmMessage, FcmToken
-│   │   └── data/               # FcmService + provider
-│   ├── network/                # Dio setup, interceptors
-│   │   ├── auth_token_provider.dart  # Slot provider (DI boundary)
-│   │   └── data/               # apiClientProvider
-│   ├── storage/                # SecureStorage, PreferencesStorage
-│   │   ├── domain/             # Interfaces
-│   │   └── data/               # Implementations + providers
+│   ├── exceptions/             # AppException, …
+│   ├── messaging/              # FCM + riverpod/fcm_service_provider
+│   ├── network/                # Dio, interceptors, auth_token_provider + riverpod/
+│   ├── storage/                # contracts + impl + riverpod/
 │   └── theme/                  # AppTheme (light/dark)
 ├── features/                   # Code theo từng tính năng
 │   ├── auth/
-│   │   ├── domain/
-│   │   │   ├── interfaces/     # AuthTokenProvider (contract cho network layer)
-│   │   │   ├── models/         # AuthTokens
-│   │   │   └── repositories/   # AuthRepository (interface)
-│   │   ├── data/
-│   │   │   ├── auth_session_store.dart      # Token storage + provider
-│   │   │   ├── auth_repository_provider.dart
-│   │   │   └── repositories/
-│   │   │       └── auth_repository_impl.dart
-│   │   └── presentation/
-│   │       ├── providers/      # LoginState, LoginNotifier (UI state của login screen)
-│   │       └── screens/        # LoginScreen
+│   │   ├── domain/             # AuthRepository, use cases, AuthTokens
+│   │   ├── data/               # AuthRepositoryImpl, AuthSessionStore
+│   │   ├── riverpod/           # repository, use cases, session store providers
+│   │   └── ui/login/           # LoginScreen, LoginNotifier, LoginState
 │   └── home/
-│       └── presentation/screens/  # HomeScreen, MaintenanceScreen
+│       └── ui/                 # HomeScreen, MaintenanceScreen
 ├── routing/
 │   ├── app_routes.dart              # Path constants
 │   ├── analytics_route_observer.dart # NavigatorObserver cho Analytics
@@ -89,7 +75,7 @@ App sử dụng flavor để tách biệt môi trường **Development** và **P
 
 ### 3.2. Luồng Authentication (Đăng nhập)
 1.  Khi app khởi động (`main.dart`), token được load từ `SecureStorage` vào `AuthSessionStore`.
-2.  `AuthSessionNotifier` (tại `app/session/`) kiểm tra session qua `AuthRepository`.
+2.  `AuthSessionNotifier` (tại `app/riverpod/`) kiểm tra session qua `AuthRepository`.
 3.  `App` widget (`app.dart`) watch `authSessionNotifierProvider`:
     *   Nếu đang load: Hiển thị `CircularProgressIndicator`.
     *   Nếu đã load: GoRouter tự redirect dựa trên `appIsLoggedInProvider`.

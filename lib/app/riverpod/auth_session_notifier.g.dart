@@ -10,8 +10,7 @@ String _$authSessionNotifierHash() =>
     r'e9668428b1d776bf6b2a09518e80037de30df75f';
 
 /// App-level auth session: tracks login status and handles logout.
-/// Lives in app/session/ because it is consumed by routing and any feature,
-/// not just the auth feature itself.
+/// Consumed by routing and any feature, not only the auth feature.
 ///
 /// Copied from [AuthSessionNotifier].
 @ProviderFor(AuthSessionNotifier)

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_base/app/events/app_event.dart';
-import 'package:flutter_base/app/events/app_event_notifier.dart';
+import 'package:flutter_base/app/riverpod/app_event_notifier.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/shared/widgets/app_bar.dart';
 import 'package:flutter_base/shared/widgets/app_button.dart';

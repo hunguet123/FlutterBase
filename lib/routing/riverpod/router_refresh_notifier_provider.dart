@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:flutter_base/app/providers/app_maintenance_provider.dart';
-import 'package:flutter_base/app/session/app_auth_provider.dart';
+import 'package:flutter_base/app/riverpod/app_auth_provider.dart';
+import 'package:flutter_base/app/riverpod/app_maintenance_provider.dart';
 import 'package:flutter_base/routing/router_refresh_notifier.dart';
 import 'package:flutter_base/routing/router_refresh_state.dart';
 

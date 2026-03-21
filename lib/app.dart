@@ -4,8 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_base/app/events/app_event.dart';
-import 'package:flutter_base/app/events/app_event_notifier.dart';
-import 'package:flutter_base/app/session/auth_session_notifier.dart';
+import 'package:flutter_base/app/riverpod/app_event_notifier.dart';
+import 'package:flutter_base/app/riverpod/auth_session_notifier.dart';
 import 'package:flutter_base/core/theme/app_theme.dart';
 import 'package:flutter_base/l10n/strings.g.dart';
 import 'package:flutter_base/routing/riverpod/app_router_provider.dart';

@@ -8,8 +8,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_session_notifier.g.dart';
 
 /// App-level auth session: tracks login status and handles logout.
-/// Lives in app/session/ because it is consumed by routing and any feature,
-/// not just the auth feature itself.
+/// Consumed by routing and any feature, not only the auth feature.
 @Riverpod(keepAlive: true, dependencies: [authRepository, logoutUseCase, analytics])
 class AuthSessionNotifier extends _$AuthSessionNotifier {
   @override

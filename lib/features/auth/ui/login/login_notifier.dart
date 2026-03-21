@@ -3,7 +3,7 @@ import 'package:flutter_base/core/analytics/riverpod/analytics_provider.dart';
 import 'package:flutter_base/core/exceptions/app_exception.dart';
 import 'package:flutter_base/features/auth/ui/login/login_state.dart';
 import 'package:flutter_base/features/auth/riverpod/login_use_case_provider.dart';
-import 'package:flutter_base/app/session/auth_session_notifier.dart';
+import 'package:flutter_base/app/riverpod/auth_session_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_notifier.g.dart';
